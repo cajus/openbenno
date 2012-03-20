@@ -85,7 +85,7 @@ public class RestrictedQuery {
 
         QueryParser qp = new MultiFieldQueryParser(Version.LUCENE_24,defaultfields, new StandardAnalyzer(Version.LUCENE_24));
         Query userquery;
- 
+
             if (query.trim().equals("")) {
                 userquery = new MatchAllDocsQuery();
             } else {

@@ -259,7 +259,7 @@ public class MailSearch {
         Vector<DateRange> ranges = new Vector<DateRange>();
 
         try {
-            final long millisPerDay = 24 * 60 * 60;
+            final long millisPerDay = 24 * 60 * 60 * 1000;
             DateFormat yearDateFormat = new SimpleDateFormat("yyyy");
             ranges.add(new DateRange("alle", null, null));
             ranges.add(new DateRange("letzte 30 Tage", new Date(System.currentTimeMillis() - 30 * millisPerDay), null));
