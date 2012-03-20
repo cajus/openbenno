@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ "$USER"  != "benno" ]
+then
+  if [ "$EUID" != "0" ] 
+  then
+   echo "You must start this script as user benno";
+   exit 1
+  else
+   echo "Warning ! You are running this script as root. This is probably not what you want"
+  fi
+fi
+java -jar /opt/bennocore/bennoadmin.jar $@

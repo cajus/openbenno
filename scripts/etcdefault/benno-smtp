@@ -1,0 +1,6 @@
+BENNOCOREDIR=/opt/bennocore
+PORT=2500
+REPOSITORY=/srv/mailarchive/repo
+INDEX=/srv/mailarchive/index
+USER=benno
+

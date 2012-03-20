@@ -1,0 +1,4 @@
+#Enter queries here which signify mails, that should be excluded from the search results (Spam)
+#
+#not empty header-X-Spam-Flag
+#header-X-Spam-Flag:YES

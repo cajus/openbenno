@@ -1,0 +1,6 @@
+BENNOCOREDIR=/opt/bennocore
+REPOSITORY=/srv/mailarchive/repo
+INDEX=/srv/mailarchive/index
+QUEUE=/srv/mailarchive/queue
+USER=benno
+

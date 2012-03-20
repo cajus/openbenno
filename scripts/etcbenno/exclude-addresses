@@ -1,0 +1,3 @@
+#Addresses, which should not be shown in the from/to field of the search result list. Especially useful for proxy addresses used for import
+#benno@localhost
+
