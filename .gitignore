@@ -5,3 +5,4 @@
 *.conflict\~
 build/
 dist/
+target/

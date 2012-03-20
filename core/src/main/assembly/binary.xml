@@ -1,0 +1,24 @@
+<assembly>
+  <id>binary</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>true</includeBaseDirectory>
+  <baseDirectory>all-in-one</baseDirectory>
+  <fileSets>
+    <fileSet>
+      <includes>
+        <include>${artifactId}-*.jar</include>
+      </includes>
+      <directory>${basedir}/target</directory>
+      <outputDirectory></outputDirectory>
+      <lineEnding>keep</lineEnding>
+      <fileMode>0644</fileMode>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+    </dependencySet>
+  </dependencySets>
+</assembly>
