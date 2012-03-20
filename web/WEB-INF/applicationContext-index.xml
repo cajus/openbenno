@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:org/springframework/beans/factory/xml/spring-beans-2.0.xsd
+                        http://www.springframework.org/schema/security classpath:org/springframework/security/config/spring-security-2.0.xsd">
+
+<beans:bean id="archive" class="de.lwsystems.mailarchive.repository.SingleIndexArchive">
+ <beans:property name="indexDir" value="/srv/mailarchive/index"/>
+ <beans:property name="repositoryDir" value="/srv/mailarchive/repo"/>
+</beans:bean>
+
+<beans:bean id="mailsendhandler" class="de.lwsystems.mailarchive.web.mailsendhandler.JavaMailSendHandler">
+<beans:property name="host"><beans:null/></beans:property>
+<beans:property name="user"><beans:null/></beans:property>
+<beans:property name="password"><beans:null/></beans:property>
+</beans:bean>
+</beans:beans>
+
+
+

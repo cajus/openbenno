@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+    <!-- Appender -->
+
+    <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%-5p] %d{HH:mm:ss} %c{20.20} %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/tmp/wings.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-5p [%t] - %d{dd.MM.yyyy HH:mm:ss}%n%c:%n%m%n%n" />
+        </layout>
+    </appender>
+
+    <!--appender name="EMAIL" class="org.apache.log4j.net.SMTPAppender">
+        <param name="SMTPHost" value="localhost" />
+        <param name="EvaluatorClass" value="com.freiheit.commons.log4j.FatalTriggeringEventEvaluator" />
+        <param name="From" value="wings-log4j@localhost" />
+        <param name="To" value="foo@bar.com" />
+        <param name="Subject" value="[wings log4j] problems" />
+        <param name="BufferSize" value="50" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%-5p [%t] - %d{dd.MM.yyyy HH:mm:ss}%n%c:%n%m%n%n" />
+        </layout>
+    </appender-->
+
+    <!-- Logger -->
+
+    <logger name="org.wings">
+        <level value="INFO" />
+    </logger>
+
+    <logger name="org.directwebremoting">
+        <level value="WARN" />
+    </logger>
+    
+    <root>
+        <level value="DEBUG" />
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</log4j:configuration>

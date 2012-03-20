@@ -1,0 +1,37 @@
+TH  {
+  background-color: #b2cc00;
+}
+
+.title {
+ font-family: sans-serif;
+ font-size: x-large;
+ font-weight: bold;
+}
+
+.titlebar {
+ padding:8px;
+/* background-color: #ffffcf;*/
+ background-image: url(../images/white-to-blue.gif);
+ background-repeat:repeat-x;
+
+}
+
+TABLE.SButton,TABLE.SButton_form {
+ background-color: #DCDCDC;
+}
+
+.XTable tr.even {
+ background-color: #FFFFCF;
+}
+.XTable tr.odd {
+ background-color: #FFFFEE;
+}
+
+.yui-skin-sam div {
+  background-color: #FFFFCF;
+}
+.yui-skin-sam .yui-panel .hd {
+ background:none !important;
+ background-color: #b2cc00 !important;
+ -moz-opacity:1.0 !important;
+}

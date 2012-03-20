@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+     <ShortName>Benno</ShortName>
+     <Description>Benno Mailarchiv</Description>
+     <Image width="16" height="16">data:image/x-icon;base64,</Image>
+     <InputEncoding>UTF-8</InputEncoding>
+     <Url type="text/html" template="http://localhost:8081/bennosearch/start?query={searchTerms}"/>
+</OpenSearchDescription>

@@ -1,0 +1,38 @@
+TH  {
+  background-color: #dd0d01;
+  /*background-image:url(../images/white-to-blue.gif);*/
+}
+
+TABLE.SButton_form {
+ 
+ background-image: url(../images/button.png);
+}
+
+.title {
+ font-family: sans-serif;
+ font-size: x-large;
+ font-weight: bold;
+}
+
+.titlebar {
+ /* padding:8px;*/
+ /*background-color: #ffffcf;*/
+ background-image: url(../images/black-scalable.jpg);
+ background-repeat:repeat-x;
+ 
+
+ /*height: 30px;*/
+}
+
+TABLE.SButton,TABLE.SButton_form {
+ background-color: #EFEFEF;
+}
+
+.XTable tr.even {
+ background-color: #EFEFEF;
+}
+.XTable tr.odd {
+ background-color: #FFFFFF;
+}
+
+

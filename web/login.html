@@ -1,0 +1,27 @@
+ <html>
+    <head>
+
+        <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"><title>Login Page</title>
+
+    </head>
+    <body onload="document.f.j_username.focus();" style="border: 0;margin: 0"  >
+
+         
+            
+        <div align="center" style="margin-top: 90px" >
+            <img src="images/logo-benno.png"  alt="Logo Benno" />
+        </div>
+
+        <form name="f" action="/bennosearch/j_spring_security_check" method="post" style="font-family: sans-serif;position:relative;top:70px;">
+            <table align="center">
+
+                <tbody><tr><td>Benutzername:</td><td><input name="j_username" value="" type="text"></td></tr>
+                    <tr><td>Passwort:</td><td><input name="j_password" type="password" onchange="document.f.submit()"></td></tr>
+                    <tr><td>&#160;</td></tr>
+                    <tr><td colspan="2" onclick="document.f.submit()" style="background-image:url(images/button.png);width:150px;height:20px" align="center">Anmelden</td></tr>
+                </tbody></table>
+
+        </form>
+
+    </body>
+</html>
