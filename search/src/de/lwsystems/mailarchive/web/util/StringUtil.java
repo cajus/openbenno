@@ -89,7 +89,7 @@ public class StringUtil {
             if (o instanceof InternetAddress) {
                 InternetAddress ia=(InternetAddress)o;
                 String personal=ia.getPersonal();
-                System.out.println("Personal: "+personal);
+                
                 if (personal==null||personal.equals("")){
                     ll.add(ia.getAddress());
                 } else {

@@ -14,7 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
+ */
 package de.lwsystems.mailarchive.web;
 
 import de.lwsystems.mailarchive.parser.MetaDocument;
@@ -49,6 +49,7 @@ import org.springframework.security.context.SecurityContextHolder;
 public class RestrictedQuery {
 
     private static String[] defaultfields = {"from", "to", "text", "title"};
+
     public static Query getRestrictedQuery() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         BooleanQuery q = new BooleanQuery();
@@ -65,7 +66,7 @@ public class RestrictedQuery {
             if (str.startsWith("ROLE_QUERY_")) {
                 String allowedquery;
                 allowedquery = new String(Base64.decode(str.substring(11).trim()));
-                QueryParser qp = new QueryParser(Version.LUCENE_24,"text", new StandardAnalyzer(Version.LUCENE_24));
+                QueryParser qp = new QueryParser(Version.LUCENE_24, "text", new StandardAnalyzer(Version.LUCENE_24));
                 try {
                     q.add(qp.parse(allowedquery), BooleanClause.Occur.SHOULD);
                 } catch (ParseException ex) {
@@ -75,64 +76,62 @@ public class RestrictedQuery {
         }
         return q;
     }
-    
-    public static Query getParsedQueryWithRestrictions(String query) throws ParseException {
-        return getParsedQueryWithRestrictions(query, null,null,null);
-    }
-    
-    public static Query getParsedQueryWithRestrictions(String query,Date begin,Date end,Collection<Filter> excludefilters) throws ParseException {
-                Query querywithrestrictions;
 
-        QueryParser qp = new MultiFieldQueryParser(Version.LUCENE_24,defaultfields, new StandardAnalyzer(Version.LUCENE_24));
+    public static Query getParsedQueryWithRestrictions(String query) throws ParseException {
+        return getParsedQueryWithRestrictions(query, null, null, null);
+    }
+
+    public static Query getParsedQueryWithRestrictions(String query, Date begin, Date end, Collection<Filter> excludefilters) throws ParseException {
+        Query querywithrestrictions;
+
+        QueryParser qp = new MultiFieldQueryParser(Version.LUCENE_24, defaultfields, new StandardAnalyzer(Version.LUCENE_24));
         Query userquery;
 
-            if (query.trim().equals("")) {
-                userquery = new MatchAllDocsQuery();
-            } else {
-                userquery = qp.parse(query);
-            }
+        if (query.trim().equals("")) {
+            userquery = new MatchAllDocsQuery();
+        } else {
+            userquery = qp.parse(query);
+        }
 
-            //User restrictions
-            Query restquery;
-            if ((restquery = getRestrictedQuery()) == null) {
-                querywithrestrictions = userquery;
-            } else {
-                querywithrestrictions = new BooleanQuery();
-                ((BooleanQuery) querywithrestrictions).add(getRestrictedQuery(), BooleanClause.Occur.MUST);
-                ((BooleanQuery) querywithrestrictions).add(userquery, BooleanClause.Occur.MUST);
-            }
+        //User restrictions
+        Query restquery;
+        if ((restquery = getRestrictedQuery()) == null) {
+            querywithrestrictions = userquery;
+        } else {
+            querywithrestrictions = new BooleanQuery();
+            ((BooleanQuery) querywithrestrictions).add(getRestrictedQuery(), BooleanClause.Occur.MUST);
+            ((BooleanQuery) querywithrestrictions).add(userquery, BooleanClause.Occur.MUST);
+        }
 
-            //Date restrictions
-            if (begin != null || end != null) {
-                BooleanQuery daterestricted = new BooleanQuery();
-                String lowerDateString = null;
-                String upperDateString = null;
-                if (begin != null) {
-                    lowerDateString = MetaDocument.getDateFormat().format(begin);
-                }
-                if (end != null) {
-                    upperDateString = MetaDocument.getDateFormat().format(end);
-                }
-                TermRangeQuery rq = new TermRangeQuery("sent", lowerDateString, upperDateString, true, false);
-                daterestricted.add(rq, BooleanClause.Occur.MUST);
-                daterestricted.add(querywithrestrictions, BooleanClause.Occur.MUST);
-                querywithrestrictions = daterestricted;
+        //Date restrictions
+        if (begin != null || end != null) {
+            BooleanQuery daterestricted = new BooleanQuery();
+            String lowerDateString = null;
+            String upperDateString = null;
+            if (begin != null) {
+                lowerDateString = MetaDocument.getDateFormat().format(begin);
             }
-            //Exclude pattern (e.g. Spam)
- Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, excludefilters);
-            if (excludefilters!=null && !excludefilters.isEmpty()) {
-                Filter[] filters=new Filter[excludefilters.size()];
-                int i=0;
-                System.out.println(excludefilters.toString());
-                for (Filter f:excludefilters) {
-                    System.out.println(f);
-                    filters[i++]=f;
-                }
-                querywithrestrictions=new FilteredQuery(querywithrestrictions, new ChainedFilter(filters,ChainedFilter.ANDNOT));
-                //querywithrestrictions=new FilteredQuery(querywithrestrictions, new ChainedFilter(cfa.toArray(new Filter[1]), ChainedFilter.AND));
+            if (end != null) {
+                upperDateString = MetaDocument.getDateFormat().format(end);
             }
-            System.out.println(querywithrestrictions.toString());
+            TermRangeQuery rq = new TermRangeQuery("sent", lowerDateString, upperDateString, true, false);
+            daterestricted.add(rq, BooleanClause.Occur.MUST);
+            daterestricted.add(querywithrestrictions, BooleanClause.Occur.MUST);
+            querywithrestrictions = daterestricted;
+        }
+        //Exclude pattern (e.g. Spam)
+        Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, excludefilters);
+        if (excludefilters != null && !excludefilters.isEmpty()) {
+            Filter[] filters = new Filter[excludefilters.size()];
+            int i = 0;
 
-           return querywithrestrictions;
+            for (Filter f : excludefilters) {
+                filters[i++] = f;
+            }
+            querywithrestrictions = new FilteredQuery(querywithrestrictions, new ChainedFilter(filters, ChainedFilter.ANDNOT));
+            //querywithrestrictions=new FilteredQuery(querywithrestrictions, new ChainedFilter(cfa.toArray(new Filter[1]), ChainedFilter.AND));
+        }
+
+        return querywithrestrictions;
     }
 }

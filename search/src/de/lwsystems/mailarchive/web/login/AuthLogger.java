@@ -21,7 +21,7 @@ public class AuthLogger {
      * @param appName name of the application
      */
     public AuthLogger(String appName) {
-        System.out.println("AuthLogger loaded...");
+        Logger.getLogger(AuthLogger.class.getName()).log(Level.FINE, "AuthLogger loaded...");
         this.appName = appName;
     }
 
