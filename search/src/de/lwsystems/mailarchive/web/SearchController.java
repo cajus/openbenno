@@ -313,6 +313,7 @@ public class SearchController implements ActionListener, SRequestListener {
             try {
                 TopScoreDocCollector tdc = TopScoreDocCollector.create(numofhits,true);
                 tablemodel.getIndexSearcher().search(q, tdc);
+
                 return tdc;
             } catch (IOException ex) {
                 Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);

@@ -56,9 +56,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.context.support.ServletContextResource;
 import javax.mail.internet.InternetAddress;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Searcher;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.TopFieldDocs;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 
 /**
  *
@@ -70,12 +71,11 @@ public class SearchResultModel extends AbstractTableModel {
     private Searcher indexSearcher;
     private Repository repo;
     //private Hits hits;
-    private TopDocs hits;
+    private TopFieldDocs hits;
     private String indexdir;
     private String repodir;
     private String[] columnnames = {"Von", "An", "Anhang", "Betreff", "Datum", "ID"};
     private DateFormat dateformat = new SimpleDateFormat("dd.MM.yy, HH:mm");
-    private static int MAXIMUM_TO_SORT = 50;
     private LinkedList<String> toExcludeMailAddresses = new LinkedList<String>();
     //Default fields to be searched
     private int summaryWidth=80;
@@ -225,17 +225,9 @@ public class SearchResultModel extends AbstractTableModel {
             indexSearcher = archive.updateSearcher();
         }
 
-
-        //hits = indexSearcher.search(q);
-
-       
-         hits=archive.getIndexSearcher().search(q,10000);
-
-
-
-         //TODO: sort hits
-         sortHits();
-
+        Sort sort = new Sort(new SortField("sent", SortField.STRING));
+        hits = archive.getIndexSearcher().search(q, null, 10000, sort);
+        
         fireTableStructureChanged();
 
         return true;
@@ -582,44 +574,4 @@ public class SearchResultModel extends AbstractTableModel {
         return "";
     }
 
-    private void sortHits() {
-       //sort the first 100 results with date
-         Comparator<ScoreDoc> cmp = new Comparator<ScoreDoc>() {
-               String field="sent";
-                boolean order=false;
-                public int compare(ScoreDoc h0, ScoreDoc h1) {
-                try {
-                    Comparable o0;
-                    Comparable o1;
-                    o0 = getIndexSearcher().doc(h0.doc).get(field);
-                    o1 = getIndexSearcher().doc(h1.doc).get(field);
-                    if (o0 == null && o1 == null) {
-                        return 0;
-                    }
-                    if (order) {
-                        if (o0 == null) {
-                            return 1;
-                        }
-                        return o0.compareTo(o1);
-                    } else {
-                        if (o1 == null) {
-                            return 1;
-                        }
-                        return o1.compareTo(o0);
-                    }
-                } catch (CorruptIndexException ex) {
-                    Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
-
-                } catch (IOException ex) {
-                    Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (NullPointerException ex) {
-                }
-                return 0;
-                }
-         };
-       Arrays.sort(hits.scoreDocs,0,Math.min(hits.scoreDocs.length, MAXIMUM_TO_SORT),cmp);
-    }
-
-
  }
-
