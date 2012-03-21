@@ -222,7 +222,7 @@ public class SearchResultModel extends AbstractTableModel {
             indexSearcher = archive.updateSearcher();
         }
 
-        Sort sort = new Sort(new SortField("sent", SortField.STRING));
+        Sort sort = new Sort(new SortField("sent", SortField.STRING, true));
         hits = archive.getIndexSearcher().search(q, null, 10000, sort);
 
         fireTableStructureChanged();
