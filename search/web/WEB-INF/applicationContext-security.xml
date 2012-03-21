@@ -1,56 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-  - Sample namespace-based configuration
-  -
-  - $Id: applicationContext-security.xml 3019 2008-05-01 17:51:48Z luke_t $
-
-  -->
-
 <beans:beans xmlns="http://www.springframework.org/schema/security"
-    xmlns:beans="http://www.springframework.org/schema/beans"
-    xmlns:aop="http://www.springframework.org/schema/aop" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:org/springframework/beans/factory/xml/spring-beans-2.0.xsd
-			http://www.springframework.org/schema/aop classpath:org/springframework/aop/config/spring-aop-2.0.xsd
-                        http://www.springframework.org/schema/security classpath:org/springframework/security/config/spring-security-2.0.xsd"
-			>
-<!--   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd">-->
-
-<!-- <beans:bean class="org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator" />    -->
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:aop="http://www.springframework.org/schema/aop" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:org/springframework/beans/factory/xml/spring-beans-2.0.xsd
+                                 http://www.springframework.org/schema/aop classpath:org/springframework/aop/config/spring-aop-2.0.xsd
+                                 http://www.springframework.org/schema/security classpath:org/springframework/security/config/spring-security-2.0.xsd">
       
-    <http>
+  <http>
+    <intercept-url pattern="/login.html*" filters="none"/> 
+    <intercept-url pattern="/images/**" filters="none"/>      
+    <intercept-url pattern="/**" access="IS_AUTHENTICATED_REMEMBERED" />
+    <form-login login-page='/login.html'/>
+    <anonymous />
+    <logout />
+  </http>
 
-	<intercept-url pattern="/login.html*" filters="none"/> 
-	<intercept-url pattern="/images/**" filters="none"/>      
-       <intercept-url pattern="/**" access="IS_AUTHENTICATED_REMEMBERED" />
-<!--       <http-basic/> -->
-        <form-login login-page='/login.html'/> 
-        <anonymous />
-        <logout />
-                                 
-    </http>
-                
- <authentication-provider user-service-ref='userdetailsmanager'/>
+  <authentication-provider user-service-ref='userdetailsmanager'/>
 
-<beans:bean  id="userdetailsmanager" class="de.lwsystems.mailarchive.web.login.ExternalCommandUserDetailsManager">
+  <beans:bean  id="userdetailsmanager" class="de.lwsystems.mailarchive.web.login.ExternalCommandUserDetailsManager">
     <beans:property  name="command" value="python /srv/mailarchive/userdb/userdetails.py"/>
   </beans:bean>
- <beans:bean id="authLogger" class="de.lwsystems.mailarchive.web.login.AuthLogger">  
-   <beans:constructor-arg value="BennoSearch" />  
- </beans:bean> 
-<aop:config>  
-  <aop:aspect id="authLoggerAspect" ref="authLogger">  
-  
-    <aop:pointcut id="authPointcut" expression="execution(public * org.springframework.security.providers.AuthenticationProvider.authenticate(..))" />  
-  
-    <aop:around pointcut-ref="authPointcut" method="logAuth" />  
-  
-  </aop:aspect>  
-</aop:config>  
+
+  <beans:bean id="authLogger" class="de.lwsystems.mailarchive.web.login.AuthLogger">  
+    <beans:constructor-arg value="BennoSearch" />  
+  </beans:bean> 
+
+  <!-- Sample LDAP configuration
+  <beans:bean id="contextSource" class="org.springframework.security.ldap.DefaultSpringSecurityContextSource">
+    <beans:constructor-arg value="ldap://ldap.example.net:389"/>
+    <beans:property name="base" value="dc=example,dc=net"/>
+    <beans:property name="userDn" value=""/>
+    <beans:property name="password" value=""/>
+  </beans:bean>
+
+  <beans:bean id="ldapProvider" class="org.springframework.security.providers.ldap.LdapAuthenticationProvider">
+    <custom-authentication-provider/>
+    <beans:constructor-arg>
+      <beans:bean class="org.springframework.security.providers.ldap.authenticator.BindAuthenticator">
+        <beans:constructor-arg ref="contextSource"/>
+        <beans:property name="userSearch" ref="userSearch" />
+      </beans:bean>
+    </beans:constructor-arg>
+    <beans:constructor-arg ref="ldapAuthoritiesPopulator"/>
+  </beans:bean>
+
+  <beans:bean id="authoritiesPopulator" class="org.springframework.security.ldap.populator.DefaultLdapAuthoritiesPopulator">
+    <beans:constructor-arg ref="contextSource"/>
+    <beans:constructor-arg value="ou=groups"/>
+    <beans:property name="groupSearchFilter" value="((member={0})(objectClass=groupOfNames))"/>
+    <beans:property name="groupRoleAttribute" value="ou"/>
+  </beans:bean>
+
+  <beans:bean id="ldapAuthoritiesPopulator" class="de.lwsystems.mailarchive.web.login.LDAPAuthoritiesPopulator">
+    <beans:constructor-arg ref="contextSource"/>
+    <beans:constructor-arg value=""/>
+    <beans:property name="groupRoleAttribute" value="cn"/>
+    <beans:property name="groupSearchFilter" value="(&amp;(member={0})(objectClass=groupOfNames))"/>
+    <beans:property name="rolePrefix" value="ROLE_"/>
+    <beans:property name="searchSubtree" value="true"/>
+    <beans:property name="convertToUpperCase" value="false"/>
+    <beans:property name="mailRoleAttribute" value="mail alias"/>
+  </beans:bean>
+
+  <beans:bean id="userSearch" class="org.springframework.security.ldap.search.FilterBasedLdapUserSearch">
+    <beans:constructor-arg index="0" value=""/>
+    <beans:constructor-arg index="1" value="(uid={0})"/>
+    <beans:constructor-arg index="2" ref="contextSource" />
+  </beans:bean> 
+  -->
+
+  <aop:config>  
+    <aop:aspect id="authLoggerAspect" ref="authLogger">  
+      <aop:pointcut id="authPointcut" expression="execution(public * org.springframework.security.providers.AuthenticationProvider.authenticate(..))" />  
+      <aop:around pointcut-ref="authPointcut" method="logAuth" />  
+    </aop:aspect>  
+  </aop:config>  
 
 </beans:beans>
-
-
-

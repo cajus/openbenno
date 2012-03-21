@@ -24,6 +24,9 @@ import org.springframework.ldap.core.DirContextOperations;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.ldap.populator.DefaultLdapAuthoritiesPopulator;
 import org.springframework.util.Assert;
+import java.util.StringTokenizer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
 
@@ -31,49 +34,73 @@ import org.springframework.util.Assert;
  * additional role.
 
  * @author Niels Jäckel <niels.jaeckel@communardo.de>
+ * @author Patrick Breucking <breucking@gonicus.de>
+ * @author Cajus Pollmeier <pollmeier@gonicus.de>
 
  */
 public class LDAPAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator {
 
     /**
-
      * The attribute with the user's e-mail in the LDAP principal. This value may be directory-specific.
-
      */
     private String mailRoleAttribute = "mail";
+
     /**
-
      * The prefix for mail roles. This value is constant as of OpenBenno.
-
      */
     private String roleMailPrefix = "ROLE_MAIL_";
+
     /**
+     * Logger instance
+     */
+    private Log log = LogFactory.getLog(LDAPAuthoritiesPopulator.class);
 
+    /**
      * Copy this property from the DefaultLdapAuthoritiesPopulator
-
      */
     protected boolean convertMailToUpperCase = true;
 
-    public LDAPAuthoritiesPopulator(ContextSource contextSource, String groupSearchBase) {
+    public LDAPAuthoritiesPopulator(final ContextSource contextSource,
+            final String groupSearchBase) {
 
         super(contextSource, groupSearchBase);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    protected Set getAdditionalRoles(DirContextOperations user, String username) {
-        String mailAddress = user.getStringAttribute(mailRoleAttribute);
+    protected Set getAdditionalRoles(final DirContextOperations user,
+            final String username) {
 
-        if (convertMailToUpperCase) {
-            mailAddress = mailAddress.toUpperCase();
+        log.info("mailRoleAttribute: " + mailRoleAttribute);
+        StringTokenizer st = new StringTokenizer(mailRoleAttribute, " ");
+        Set<GrantedAuthorityImpl> result = new HashSet<GrantedAuthorityImpl>();
+
+        while (st.hasMoreElements()) {
+            String elem = st.nextToken();
+            log.info("Processing attribute " + elem);
+            String[] mailAddresses = user.getStringAttributes(elem);
+
+            if (mailAddresses == null) {
+                break;
+            }
+
+            for (String mailAddress : mailAddresses) {
+                if (mailAddress == null) {
+                    continue;
+                }
+
+                if (convertMailToUpperCase) {
+                    mailAddress = mailAddress.toUpperCase();
+                } else {
+                    mailAddress = mailAddress.toLowerCase();
+                }
+
+                log.info("Adding mail address " + mailAddress);
+                String role = roleMailPrefix + mailAddress;
+                result.add(new GrantedAuthorityImpl(role));
+            }
         }
 
-        String role = roleMailPrefix + mailAddress;
-        Set result = new HashSet();
-        result.add(new GrantedAuthorityImpl(role));
-
         return result;
-
     }
 
     /**
@@ -84,7 +111,6 @@ public class LDAPAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator {
     public void setMailRoleAttribute(String mailRoleAttribute) {
         Assert.notNull(mailRoleAttribute, "mailRoleAttribute must not be null");
         this.mailRoleAttribute = mailRoleAttribute;
-
     }
 
     /**
@@ -103,10 +129,7 @@ public class LDAPAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator {
      */
     @Override
     public void setConvertToUpperCase(boolean convertToUpperCase) {
-
         this.convertMailToUpperCase = convertToUpperCase;
-
         super.setConvertToUpperCase(convertToUpperCase);
-
     }
 }
