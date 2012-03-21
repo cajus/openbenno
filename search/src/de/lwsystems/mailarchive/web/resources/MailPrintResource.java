@@ -134,7 +134,7 @@ public class MailPrintResource extends DynamicResource {
     public void write(Device out) throws IOException, ResourceNotFoundException {
 
         DeviceOutputStream os = new DeviceOutputStream(out);
-        OutputStreamWriter osw = new OutputStreamWriter(os);
+        OutputStreamWriter osw = new OutputStreamWriter(os, "UTF8");
         osw.write("<HTML>\n ");
         osw.write("<head><META HTTP-EQUIV=\"content-type\" CONTENT=\"text/html; charset=utf-8\"></head>");
         osw.write("<BODY onload=\" window.print()\" >");
