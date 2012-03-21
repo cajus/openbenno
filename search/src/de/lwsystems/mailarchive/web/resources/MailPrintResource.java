@@ -145,7 +145,7 @@ public class MailPrintResource extends DynamicResource {
         osw.write("<td>"+to+"</td></tr>");
        osw.write("<tr><td><b>Datum:<b></td>");
         osw.write("<td>"+sent+"</td></tr>");
-         osw.write("<tr><td><b>B etreff:<b></td>");
+         osw.write("<tr><td><b>Betreff:<b></td>");
         osw.write("<td>"+subject+"</td></tr>");
         osw.write("</table>");
         osw.write("<pre>"+mainText+"</pre>");
