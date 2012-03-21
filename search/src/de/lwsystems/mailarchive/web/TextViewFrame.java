@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.lwsystems.mailarchive.web;
+
 import de.lwsystems.utils.LimitInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,17 +28,18 @@ import org.wings.SPanel;
 import org.wings.SScrollPane;
 import org.wings.STextArea;
 
-
 /**
  *
  * @author wiermer
  */
-public class TextViewFrame extends SPanel{
-    static final long BYTE_CUTOFF=1024*1024;
+public class TextViewFrame extends SPanel {
+
+    static final long BYTE_CUTOFF = 1024 * 1024;
+
     public TextViewFrame(InputStream is) {
-        InputStream mailStream=new LimitInputStream(is, BYTE_CUTOFF);
-        BufferedReader reader=new BufferedReader(new InputStreamReader(mailStream));
-        StringBuilder sb=new StringBuilder();
+        InputStream mailStream = new LimitInputStream(is, BYTE_CUTOFF);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(mailStream));
+        StringBuilder sb = new StringBuilder();
 
         String line = null;
         try {
@@ -49,19 +51,15 @@ public class TextViewFrame extends SPanel{
         } finally {
             try {
                 mailStream.close();
-                 reader.close();
+                reader.close();
             } catch (IOException ex) {
                 Logger.getLogger(TextViewFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
 
-        STextArea textArea=new STextArea(sb.toString());
-        SScrollPane scrollPane=new SScrollPane(textArea);
+        STextArea textArea = new STextArea(sb.toString());
+        SScrollPane scrollPane = new SScrollPane(textArea);
         add(scrollPane);
-
-
-
     }
-
 }

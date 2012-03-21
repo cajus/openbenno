@@ -83,23 +83,23 @@ public class AddressAndDomainSource implements XSuggestDataSource {
                         oldadresses = oldadresses.concat(singleaddresses[i]);
                         oldadresses = oldadresses.concat(",");
                     }
-                    returning.add(new AddressAndDomainSource.Entry(oldadresses.concat("domain:"+s), "Alle Mails von "+s));
+                    returning.add(new AddressAndDomainSource.Entry(oldadresses.concat("domain:" + s), "Alle Mails von " + s));
                 }
 
             }
         }
 
         for (Iterator iter = addresses.iterator(); iter.hasNext();) {
-                
-             String[] singleaddresses = part.split(",");
-                
+
+            String[] singleaddresses = part.split(",");
+
             //prevents argument overflow in frontend
             if (returning.size() > SUGGESTIONS_CUTOFF) {
                 break;
             }
             Object o = iter.next();
             if (o instanceof String) {
-                 String s = (String) o;
+                String s = (String) o;
                 if (s.toLowerCase().contains(singleaddresses[singleaddresses.length - 1].trim().toLowerCase())) {
                     String oldadresses = "";
                     for (int i = 0; i < singleaddresses.length - 1; i++) {
@@ -114,5 +114,3 @@ public class AddressAndDomainSource implements XSuggestDataSource {
         return returning;
     }
 }
-
-

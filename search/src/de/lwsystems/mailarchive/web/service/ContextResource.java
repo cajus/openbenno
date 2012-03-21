@@ -14,8 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
-
+ */
 package de.lwsystems.mailarchive.web.service;
 
 import de.lwsystems.mailarchive.web.SearchResultModel;
@@ -33,17 +32,14 @@ import javax.ws.rs.GET;
 import javax.xml.bind.JAXBException;
 import org.apache.lucene.index.CorruptIndexException;
 
-
 /**
  * REST Web Service
  *
  * @author rene
  */
-
-
-
 @Path("context")
 public class ContextResource {
+
     @Context
     private UriInfo context;
     @Context
@@ -55,7 +51,7 @@ public class ContextResource {
         if (srm == null) {
             try {
                 srm = SearchResultModel.getDefaultInstance(servletContext);
-                ute=new UsefulTermsExtractor(srm.getArchive());
+                ute = new UsefulTermsExtractor(srm.getArchive());
             } catch (CorruptIndexException ex) {
                 Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
 
@@ -67,36 +63,25 @@ public class ContextResource {
     }
 
     void appendLines(StringBuilder sb, Set<String> s) {
-        for (String str:s) {
-            sb.append(str+"\n");
+        for (String str : s) {
+            sb.append(str + "\n");
         }
     }
 
-    
     /**
      * Retrieves representation of an instance of de.lwsystems.mailarchive.repository.ValidEmailResource
      * @return an instance of java.lang.String
      */
     @GET
-    
-    //@ProduceMime("text/xml")
-    //public ContextConverter getXml() {
     @Produces("text/plain")
     public String getText() {
         init();
-        //return new ContextConverter(ute.getYears(), ute.getToAddresses(),ute.getFromAddresses(),ute.getToDomains(),ute.getFromDomains());
-       StringBuilder sb=new StringBuilder();
-       sb.append("@@YEARS\n");
-       appendLines(sb,ute.getYears());
-      sb.append("@@FROM\n");
-       appendLines(sb,ute.getFromAddresses());
-//       sb.append("@@TO\n");
-//       appendLines(sb, ute.getToAddresses());
-//       sb.append("@@FROMDOMAINS\n");
-//       appendLines(sb,ute.getFromDomains());
-//       sb.append("@@TODOMAINS\n");
-//       appendLines(sb, ute.getToDomains());
-       return sb.toString();
-        
+        StringBuilder sb = new StringBuilder();
+        sb.append("@@YEARS\n");
+        appendLines(sb, ute.getYears());
+        sb.append("@@FROM\n");
+        appendLines(sb, ute.getFromAddresses());
+        return sb.toString();
+
     }
 }

@@ -1,3 +1,20 @@
+/*
+ * JavaMailSendHandler.java
+ *
+ * Copyright (C) 2009 LWsystems GmbH & Co. KG
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.lwsystems.mailarchive.web.mailsendhandler;
 
 import java.io.InputStream;
@@ -20,17 +37,17 @@ public class JavaMailSendHandler implements MailSendHandler {
 
     @Override
     public String toString() {
-       String result="";
-       if (getHost()!=null) {
-           result=result+"Host "+getHost();
-       }
-              if (getUser()!=null) {
-           result=result+"User "+getHost();
-       }
-              if (getPassword()!=null) {
-           result=result+"Password "+getHost();
-       }
-       return result;
+        String result = "";
+        if (getHost() != null) {
+            result = result + "Host " + getHost();
+        }
+        if (getUser() != null) {
+            result = result + "User " + getHost();
+        }
+        if (getPassword() != null) {
+            result = result + "Password " + getHost();
+        }
+        return result;
     }
 
     public String getHost() {
@@ -124,13 +141,9 @@ public class JavaMailSendHandler implements MailSendHandler {
             }
 
             Transport.send(msg);
+
         } catch (MessagingException ex) {
             Logger.getLogger(JavaMailSendHandler.class.getName()).log(Level.SEVERE, null, ex);
-
-
-
-
-
             throw new MailSendFailureException(ex.toString());
         }
     }

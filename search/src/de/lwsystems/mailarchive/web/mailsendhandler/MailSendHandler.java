@@ -14,8 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
-
+ */
 package de.lwsystems.mailarchive.web.mailsendhandler;
 
 import java.io.InputStream;
@@ -25,6 +24,8 @@ import java.io.InputStream;
  * @author wiermer
  */
 public interface MailSendHandler {
+
     public boolean isReady();
-    public void sendMail(String from,String to[], String[] cc, String[] bcc, InputStream in) throws MailSendFailureException;
+
+    public void sendMail(String from, String to[], String[] cc, String[] bcc, InputStream in) throws MailSendFailureException;
 }

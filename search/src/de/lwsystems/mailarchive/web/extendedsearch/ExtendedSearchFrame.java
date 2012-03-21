@@ -101,7 +101,7 @@ public class ExtendedSearchFrame extends SPanel {
     private Date getLatestDate() {
         return sc.getLatestDate();
     }
-    
+
     private Set<String> getHeader() {
         return sc.getHeaders();
     }
@@ -175,7 +175,7 @@ public class ExtendedSearchFrame extends SPanel {
         }
     }
 
-    Query constructQuery(String froms, String tos, Date begin, Date end, String title, String main, boolean attachments, String headerField,String headerContent) {
+    Query constructQuery(String froms, String tos, Date begin, Date end, String title, String main, boolean attachments, String headerField, String headerContent) {
         BooleanQuery q = new BooleanQuery();
         if (!froms.trim().equals("")) {
             BooleanQuery fromQuery = new BooleanQuery();
@@ -205,7 +205,7 @@ public class ExtendedSearchFrame extends SPanel {
         if (begin != null) {
             if (end != null) {
                 q.add(new TermRangeQuery("sent", MetaDocument.getDateFormat().format(begin),
-                        MetaDocument.getDateFormat().format(new Date(end.getTime()+(24L*60L*60L*1000L))), true, true), BooleanClause.Occur.MUST);
+                        MetaDocument.getDateFormat().format(new Date(end.getTime() + (24L * 60L * 60L * 1000L))), true, true), BooleanClause.Occur.MUST);
             }
         }
         if (!title.trim().equals("")) {
@@ -217,8 +217,8 @@ public class ExtendedSearchFrame extends SPanel {
         if (attachments) {
             q.add(new TermQuery(new Term("multipart", "true")), BooleanClause.Occur.MUST);
         }
-        if (headerField!=null&&headerContent!=null&&!headerField.trim().equals("")&&!headerContent.trim().equals("")) {
-            q.add(new TermQuery(new Term("header-"+headerField, headerContent.trim())),BooleanClause.Occur.MUST);
+        if (headerField != null && headerContent != null && !headerField.trim().equals("") && !headerContent.trim().equals("")) {
+            q.add(new TermQuery(new Term("header-" + headerField, headerContent.trim())), BooleanClause.Occur.MUST);
         }
         return q;
     }
@@ -261,7 +261,6 @@ public class ExtendedSearchFrame extends SPanel {
         }
 
         //Layout
-
         SGridLayout senderLayout = new SGridLayout(2, 7);
         senderLayout.setVgap(5);
         senderLayout.setHgap(7);
@@ -273,26 +272,18 @@ public class ExtendedSearchFrame extends SPanel {
         final XSuggest senderChooser = new XSuggest();
         senderChooser.setText(senderString);
 
-
-        //senderChooser.setDataSource(new AddressSource(getFromAddresses()));
         senderChooser.setDataSource(new AddressAndDomainSource(getFromAddresses(), getFromDomains()));
         senderChooser.setSuggestBoxWidth(new SDimension(SDimension.INHERIT, SDimension.INHERIT));
         senderChooser.setPreferredSize(SDimension.FULLWIDTH);
         senderChooser.setVerticalAlignment(SConstants.RIGHT_ALIGN);
         sender.add(senderChooser);
 
-        //SPanel recipient = new SPanel(new SGridLayout(1, 2));
-        //recipient.add(new SLabel("Empfänger:"));
         sender.add(new SLabel("Betreff:"));
         final STextField titleValue = new STextField();
         titleValue.setPreferredSize(SDimension.FULLWIDTH);
         titleValue.setVerticalAlignment(SConstants.RIGHT_ALIGN);
         sender.add(titleValue);
 
-//        SGridLayout dateRangeLayout = new SGridLayout(1, 4);
-//       
-//        dateRangeLayout.setHgap(5);
-//        SPanel dateRange = new SPanel(dateRangeLayout);
         SGridLayout fromDateLayout = new SGridLayout(1, 3);
         SGridLayout toDateLayout = new SGridLayout(1, 3);
         fromDateLayout.setHgap(10);
@@ -300,19 +291,14 @@ public class ExtendedSearchFrame extends SPanel {
         SPanel fromDate = new SPanel(fromDateLayout);
         SPanel toDate = new SPanel(toDateLayout);
         fromDate.add(new SLabel("Von:"));
-        // final STextField beginValue = new STextField();
-        //fromDate.add(beginValue);
 
         final XCalendar beginChooser = new XCalendar(startDate, new SDateFormatter());
         fromDate.add(beginChooser);
         toDate.add(new SLabel("Bis:"));
-        //final STextField endValue = new STextField();
-        //toDate.add(endValue);
         final XCalendar endChooser = new XCalendar(endDate, new SDateFormatter());
         toDate.add(endChooser);
         sender.add(fromDate);
         sender.add(toDate);
-
 
         sender.add(new SLabel(" "));
         SGridLayout titleGrid = new SGridLayout(2, 2);
@@ -322,16 +308,13 @@ public class ExtendedSearchFrame extends SPanel {
         sender.add(new SLabel("Empfänger:"));
         final XSuggest recipientChooser = new XSuggest();
 
-
         recipientChooser.setText(recipientString);
-        //recipientChooser.setDataSource(new AddressSource(getToAddresses()));
         recipientChooser.setDataSource(new AddressAndDomainSource(getToAddresses(), getToDomains()));
         recipientChooser.setPreferredSize(SDimension.FULLWIDTH);
         recipientChooser.setVerticalAlignment(SConstants.RIGHT_ALIGN);
 
         sender.add(recipientChooser);
 
-        //SPanel main = new SPanel(new SGridLayout(1, 2));
         sender.add(new SLabel("Volltext:"));
         final STextField mainValue = new STextField();
         mainValue.setPreferredSize(SDimension.FULLWIDTH);
@@ -347,8 +330,8 @@ public class ExtendedSearchFrame extends SPanel {
                 attachments.toggle();
             }
         });
-          
-        final SCheckBox spamValue = new SCheckBox("auch Spam", false);
+
+        final SCheckBox spamValue = new SCheckBox("SPAM anzeigen", false);
         sc.setExcludeSpam(true);
         sender.add(spamValue);
         spamValue.addActionListener(new ActionListener() {
@@ -357,39 +340,29 @@ public class ExtendedSearchFrame extends SPanel {
                 sc.setExcludeSpam(!sc.isExcludeSpam());
             }
         });
-        
+
         sender.add(new SLabel(" ")); //for layout reasons
         SPanel fields = new SPanel(new SGridLayout(1, 2));
-        //fields.add(new SLabel("Mail-Header:"));
-        final SComboBox headerSelect=new SComboBox(new Vector(getHeader()));
+        final SComboBox headerSelect = new SComboBox(new Vector<String>(getHeader()));
 
-        //fields.add(headerSelect);
-        final STextField headerContent=new STextField();
+        final STextField headerContent = new STextField();
         headerContent.setColumns(20);
-        //fields.add(headerContent);
-        
-        //sender.add(fields);
+
         sender.add(new SLabel("Mail-Header:"));
         sender.add(headerSelect);
         sender.add(new SLabel("="));
         sender.add(headerContent);
-        
+
         final LinkedList<HeaderClause> clauses = new LinkedList<HeaderClause>();
-//        SPanel clausesComponents = renderClauses(clauses);
-//        clausesComponents.setPreferredSize(new SDimension(250,20));
-//        clausesComponents.setVerticalAlignment(SConstants.RIGHT_ALIGN);
-//        fields.add(clausesComponents);
-        final SButton doConstructQuery = new SButton("Suche durchführen");
+        final SButton doConstructQuery = new SButton("Suchen");
         doConstructQuery.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
                 Query q = constructQuery(senderChooser.getText(), recipientChooser.getText(),
                         beginChooser.getDate(), endChooser.getDate(),
                         titleValue.getText(), mainValue.getText(), attachments.getValue(),
-                        (String) headerSelect.getSelectedItem(),headerContent.getText());
-                //exclude if you want to copy the query into the search field
-                //queryField.setText(" ".concat(q.toString()));
-                //sc.setQuery(queryField.getText());
+                        (String) headerSelect.getSelectedItem(), headerContent.getText());
+                
                 sc.setQuery(q.toString());
                 sc.executeQuery();
 
@@ -402,22 +375,23 @@ public class ExtendedSearchFrame extends SPanel {
                 doConstructQuery.doClick();
             }
         };
-        final SButton doReset= new SButton("Zurücksetzen");
+        final SButton doReset = new SButton("Zurücksetzen");
         doReset.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
-            senderChooser.setText("");
-            recipientChooser.setText("");
-            beginChooser.setDate(getEarliestDate());
-            endChooser.setDate(getLatestDate());
-            titleValue.setText("");
-            mainValue.setText("");
-            if (attachments.getValue())
-                attachments.toggle();
-            headerContent.setText("");
+                senderChooser.setText("");
+                recipientChooser.setText("");
+                beginChooser.setDate(getEarliestDate());
+                endChooser.setDate(getLatestDate());
+                titleValue.setText("");
+                mainValue.setText("");
+                if (attachments.getValue()) {
+                    attachments.toggle();
+                }
+                headerContent.setText("");
 
-        }}
-            );
+            }
+        });
         senderChooser.addActionListener(al);
         recipientChooser.addActionListener(al);
         titleValue.addActionListener(al);
@@ -426,29 +400,12 @@ public class ExtendedSearchFrame extends SPanel {
         //Layout
         sender.setHorizontalAlignment(SConstants.LEFT_ALIGN);
         sender.setPreferredSize(SDimension.FULLWIDTH);
-        //recipient.setHorizontalAlignment(SConstants.LEFT_ALIGN);
-        //recipient.setPreferredSize(SDimension.FULLWIDTH);
-//        dateRange.setHorizontalAlignment(SConstants.LEFT_ALIGN);
-//        dateRange.setPreferredSize(SDimension.FULLWIDTH);
-//        dateRangeLayout.setVgap(10);
-//        title.setHorizontalAlignment(SConstants.LEFT_ALIGN);
-//        title.setPreferredSize(SDimension.FULLWIDTH);
-//        main.setHorizontalAlignment(SConstants.LEFT_ALIGN);
-        //main.setPreferredSize(SDimension.FULLWIDTH);
         attachmentsValue.setHorizontalAlignment(SConstants.LEFT_ALIGN);
-        //fields.setHorizontalAlignment(SConstants.LEFT_ALIGN);
-        //fields.setPreferredSize(SDimension.FULLWIDTH);
         doConstructQuery.setHorizontalAlignment(SConstants.LEFT_ALIGN);
 
         add(sender);
-       
-        //add(recipient);
-        //add(dateRange);
-        //add(title);
-        //add(main);
-        //add(attachmentsValue);
         add(new SSeparator(SConstants.HORIZONTAL));
-        //add(fields);
+
         sender.add(doConstructQuery);
         sender.add(doReset);
 

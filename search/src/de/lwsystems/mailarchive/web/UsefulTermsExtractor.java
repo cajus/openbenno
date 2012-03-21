@@ -146,7 +146,6 @@ public class UsefulTermsExtractor {
 
 
         //header
-
         TermEnum[] enums = archive.getTerms(new Term("header-", ""));
         for (TermEnum e : enums) {
             boolean cont = true;
@@ -170,19 +169,17 @@ public class UsefulTermsExtractor {
             }
         }
 
-
-
         Vector<String> todelete = new Vector<String>();
+
         for (String i : headerswithfreq.keySet()) {
             if (headerswithfreq.get(i) <= 1) {
                 todelete.add(i);
             }
         }
+
         for (String i : todelete) {
             headerswithfreq.remove(i);
         }
-
-
     }
 
     public Date getEarliestDate() {
@@ -215,8 +212,8 @@ public class UsefulTermsExtractor {
             return new Date();
         }
     }
-    //returns a sorted vector with all unique email addresses.
 
+    //returns a sorted vector with all unique email addresses.
     public Set<String> getFromAddresses() {
         return froms;
     }
@@ -241,4 +238,3 @@ public class UsefulTermsExtractor {
         return headers;
     }
 }
-

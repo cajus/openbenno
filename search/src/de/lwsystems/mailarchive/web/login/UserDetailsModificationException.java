@@ -14,8 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
-
+ */
 package de.lwsystems.mailarchive.web.login;
 
 /**
@@ -23,20 +22,18 @@ package de.lwsystems.mailarchive.web.login;
  * @author rene
  */
 public class UserDetailsModificationException extends Exception {
+
     /**
      * 
      */
-    public UserDetailsModificationException()
-  {
-		
-  }
+    public UserDetailsModificationException() {
+    }
+
     /**
      * 
      * @param s
      */
-    public UserDetailsModificationException(String s)
-  {
-    super(s);	
-  }
-
+    public UserDetailsModificationException(String s) {
+        super(s);
+    }
 }

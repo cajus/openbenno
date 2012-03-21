@@ -14,7 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
+ */
 package de.lwsystems.mailarchive.web.login;
 
 import java.io.BufferedReader;
@@ -79,7 +79,7 @@ public class ExternalCommandUserDetailsManager implements ListUserDetailsManager
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         try {
             if ((thisLine = reader.readLine()) == null) {
-                throw new DataRetrievalFailureException("External command "+getCommand() + " GET " + username+"returned nothing");
+                throw new DataRetrievalFailureException("External command " + getCommand() + " GET " + username + "returned nothing");
             }
 
             if (thisLine.trim().startsWith("NOT_FOUND")) {
@@ -164,7 +164,7 @@ public class ExternalCommandUserDetailsManager implements ListUserDetailsManager
             }
         }
     }
-    
+
     /**
      * Updates the details of a user.
      * This implementation simply deletes the user and recreates him new.
@@ -204,7 +204,6 @@ public class ExternalCommandUserDetailsManager implements ListUserDetailsManager
      * Note that this is done with the ADD USER command. The script is responsible for deleting the old entry.
      * No check is done, whether the username exists.
      */
-    
     /**
      * 
      * @param username

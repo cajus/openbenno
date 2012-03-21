@@ -14,8 +14,8 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ package de.lwsystems.mailarchive.web.resources;
-
+ */
+package de.lwsystems.mailarchive.web.resources;
 
 import java.io.IOException;
 import java.io.InputStream;

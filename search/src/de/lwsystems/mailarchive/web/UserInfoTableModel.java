@@ -14,8 +14,8 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ package de.lwsystems.mailarchive.web;
-
+ */
+package de.lwsystems.mailarchive.web;
 
 import de.lwsystems.mailarchive.web.domain.UserRightEntity;
 import de.lwsystems.utils.Base64;
@@ -84,7 +84,7 @@ class UserInfoTableModel extends DefaultTableModel {
                 true, true, true, true,
                 (GrantedAuthority[]) ll.toArray(new GrantedAuthority[0]));
         udm.updateUser(ud);
-        userdetails=udm.loadUserByUsername(userdetails.getUsername());
+        userdetails = udm.loadUserByUsername(userdetails.getUsername());
     }
 
     @Override
@@ -142,8 +142,7 @@ class UserInfoTableModel extends DefaultTableModel {
                 return role.substring(10);
             }
             if (role.startsWith("ROLE_QUERY_")) {
-                //           return role.substring(11);
-                return new String(Base64.decode(role.substring(11)));
+                 return new String(Base64.decode(role.substring(11)));
 
             }
             return role.substring(5);
@@ -152,7 +151,7 @@ class UserInfoTableModel extends DefaultTableModel {
 
     @Override
     public void setValueAt(Object arg0, int arg1, int arg2) {
-         //not needed
+        //not needed
     }
 
     public void addRight(UserRightEntity userRightEntity, String text) {
@@ -196,13 +195,13 @@ class UserInfoTableModel extends DefaultTableModel {
             return;
         }
     }
-    
+
     public String getRole() {
-        String found=null;
-        for (int i=0;i<getRowCount();i++) {
-           if ((UserRightEntity) getValueAt(i, 0)==UserRightEntity.ROLE) {
-               found=(String) getValueAt(i, 1);
-           }
+        String found = null;
+        for (int i = 0; i < getRowCount(); i++) {
+            if ((UserRightEntity) getValueAt(i, 0) == UserRightEntity.ROLE) {
+                found = (String) getValueAt(i, 1);
+            }
         }
         return found;
     }

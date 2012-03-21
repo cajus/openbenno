@@ -14,24 +14,26 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */  
-  
+ */
 package de.lwsystems.mailarchive.web.service;
 
 import java.util.Set;
 import javax.xml.bind.annotation.*;
+
 /**
  *
  * @author wiermer
  */
-@XmlRootElement(name="context")
+@XmlRootElement(name = "context")
 public class ContextConverter {
+
     Set<String> year;
     Set<String> to;
     Set<String> from;
     Set<String> todomain;
     Set<String> fromdomain;
-@XmlElement
+
+    @XmlElement
     public Set<String> getFrom() {
         return from;
     }
@@ -47,7 +49,8 @@ public class ContextConverter {
     public void setFrom(Set<String> from) {
         this.from = from;
     }
-@XmlElement
+
+    @XmlElement
     public Set<String> getFromDomain() {
         return fromdomain;
     }
@@ -55,7 +58,8 @@ public class ContextConverter {
     public void setFromDomain(Set<String> fromdomains) {
         this.fromdomain = fromdomains;
     }
-@XmlElement
+
+    @XmlElement
     public Set<String> getTo() {
         return to;
     }
@@ -63,33 +67,30 @@ public class ContextConverter {
     public void setTo(Set<String> to) {
         this.to = to;
     }
-@XmlElement
+
+    @XmlElement
     public Set<String> getToDomain() {
         return todomain;
     }
- 
+
     public void setToDomain(Set<String> todomains) {
         this.todomain = todomains;
     }
-    
 
     public void setYear(Set<String> years) {
         this.year = years;
     }
-    
-      @XmlElement
+
+    @XmlElement
     public Set<String> getYear() {
         return year;
     }
-    
-    
-  
-    
+
     public ContextConverter() {
-        year=null;
+        year = null;
     }
+
     public ContextConverter(Set<String> years) {
         this.year = years;
     }
-    
 }

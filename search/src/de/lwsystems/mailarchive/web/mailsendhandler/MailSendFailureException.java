@@ -14,8 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
-
+ */
 package de.lwsystems.mailarchive.web.mailsendhandler;
 
 /**
@@ -23,13 +22,11 @@ package de.lwsystems.mailarchive.web.mailsendhandler;
  * @author wiermer
  */
 public class MailSendFailureException extends Exception {
-      public MailSendFailureException()
-  {
-		
-  }
-  public MailSendFailureException(String s)
-  {
-    super(s);	
-  }
 
+    public MailSendFailureException() {
+    }
+
+    public MailSendFailureException(String s) {
+        super(s);
+    }
 }

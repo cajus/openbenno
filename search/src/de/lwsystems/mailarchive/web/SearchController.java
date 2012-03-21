@@ -21,10 +21,6 @@ import de.lwsystems.mailarchive.web.mailsendhandler.MailSendHandler;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Calendar;
@@ -121,24 +117,9 @@ public class SearchController implements ActionListener, SRequestListener {
         spamFilters=exclf;
 
         try {
-            //searchresults.setText(searchresults.getSession().getServletContext().getRealPath("/"));
             tablemodel = SearchResultModel.getDefaultInstance(searchresults.getSession().getServletContext());
-//            tablemodel.setWaitCallback(new WaitCallback() {
-//
-//                public void startWaiting() {
-//                    finrs.setVisible(false);
-//
-//                }
-//
-//                public void stopWaiting() {
-//                    finrs.setVisible(true);
-//                }
-//            });
-
             ute = new UsefulTermsExtractor(tablemodel.getArchive());
-
             collected = true;
-
         } catch (CorruptIndexException ex) {
             Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

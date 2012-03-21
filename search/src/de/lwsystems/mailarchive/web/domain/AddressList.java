@@ -14,8 +14,8 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ package de.lwsystems.mailarchive.web.domain;
-
+ */
+package de.lwsystems.mailarchive.web.domain;
 
 import java.util.LinkedList;
 
@@ -37,19 +37,8 @@ public class AddressList {
 
     public String[] getAddressNames() {
         LinkedList<String> addrnames = new LinkedList<String>();
-  //      InternetAddress surl = new InternetAddress();
+
         for (String s : addresses) {
-//            try {
-//                surl = new InternetAddress(s);
-//            } catch (AddressException ex) {
-//                Logger.getLogger(AddressList.class.getName()).log(Level.SEVERE, null, ex);
-//                addrnames.add(s);
-//            }
-//            if (surl.getPersonal() != null) {
-//                addrnames.add(surl.getPersonal());
-//            } else {
-//                addrnames.add(surl.getAddress());
-//            }
             addrnames.add(s);
         }
         return (String[]) addrnames.toArray();
@@ -67,5 +56,3 @@ public class AddressList {
     }
 }
     
-
-

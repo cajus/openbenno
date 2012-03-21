@@ -1,3 +1,20 @@
+/*
+ * FieldExistsFilter.java
+ *
+ * Copyright (C) 2009 LWsystems GmbH & Co. KG
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package de.lwsystems.mailarchive.web.util;
 
 import java.io.IOException;
@@ -5,7 +22,6 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermDocs;
@@ -20,7 +36,7 @@ import org.apache.lucene.util.OpenBitSet;
  */
 public class FieldExistsFilter extends Filter {
 
-    SortedSet fields = new TreeSet();
+    SortedSet<String> fields = new TreeSet<String>();
 
     /**
      * Adds a field to the list of acceptable fields
@@ -33,7 +49,6 @@ public class FieldExistsFilter extends Filter {
     /* (non-Javadoc)
      * @see org.apache.lucene.search.Filter#bits(org.apache.lucene.index.IndexReader)
      */
-
     public BitSet bits(IndexReader reader) throws IOException {
         final BitSet result = new BitSet(reader.maxDoc());
         for (Iterator iter = fields.iterator(); iter.hasNext();) {
@@ -60,7 +75,7 @@ public class FieldExistsFilter extends Filter {
         for (Iterator iter = fields.iterator(); iter.hasNext();) {
             String field = (String) iter.next();
             TermEnum terms = reader.terms(new Term(field, ""));
-            while (terms.next() && terms.term().field().equals(field) &&!terms.term().text().equals("")) {
+            while (terms.next() && terms.term().field().equals(field) && !terms.term().text().equals("")) {
                 TermDocs td = reader.termDocs(terms.term());
                 while (td.next()) {
                     result.set(td.doc());
@@ -82,7 +97,7 @@ public class FieldExistsFilter extends Filter {
             return false;
         }
         FieldExistsFilter test = (FieldExistsFilter) obj;
-        return (fields== test.fields || (fields != null && fields.equals(test.fields)));
+        return (fields == test.fields || (fields != null && fields.equals(test.fields)));
 
 
     }

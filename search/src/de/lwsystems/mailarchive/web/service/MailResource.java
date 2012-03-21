@@ -14,12 +14,11 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
+ */
 package de.lwsystems.mailarchive.web.service;
 
 import de.lwsystems.mailarchive.repository.MessageID;
 import de.lwsystems.mailarchive.web.SearchResultModel;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -91,7 +90,6 @@ public class MailResource {
         } catch (IOException ex) {
             Logger.getLogger(MailResource.class.getName()).log(Level.SEVERE, null, ex);
         }
-         return sb.toString();
+        return sb.toString();
     }
-    
 }

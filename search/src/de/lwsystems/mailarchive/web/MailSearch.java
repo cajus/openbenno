@@ -135,12 +135,12 @@ public class MailSearch {
             @Override
             protected InputStream getResourceStream() throws ResourceNotFoundException {
 
-                String realurl=rootFrame.getSession().getServletRequest().getRequestURL().toString();
+                String realurl = rootFrame.getSession().getServletRequest().getRequestURL().toString();
                 //cut-off request for resource to get the parent
-                String [] splittedurl=realurl.split(("/"));
-                String resulturl="";
-                for (int i=0;i<splittedurl.length-1;i++) {
-                    resulturl+=splittedurl[i]+"/";
+                String[] splittedurl = realurl.split(("/"));
+                String resulturl = "";
+                for (int i = 0; i < splittedurl.length - 1; i++) {
+                    resulturl += splittedurl[i] + "/";
                 }
                 String result = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?> \n"
                         + "<OpenSearchDescription xmlns=\"http://a9.com/-/spec/opensearch/1.1/\"> \n"
@@ -149,10 +149,10 @@ public class MailSearch {
                         + "<InputEncoding>UTF-8</InputEncoding>\n"
                         + "<Url type=\"text/html\" template=\""
                         + resulturl
-                        +"?query={searchTerms}\"/> \n"
-                        +"<Image height=\"16\" width=\"16\" type=\"image/x-icon\">"
+                        + "?query={searchTerms}\"/> \n"
+                        + "<Image height=\"16\" width=\"16\" type=\"image/x-icon\">"
                         + resulturl
-                        +"../images/favicon.ico"
+                        + "../images/favicon.ico"
                         + "</Image>\n"
                         + "</OpenSearchDescription>\n";
                 return new ByteArrayInputStream(result.getBytes());
@@ -231,8 +231,6 @@ public class MailSearch {
             } catch (IOException ex) {
                 Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, "I/O exception while reading /etc/benno/exclude-queries:" + ex);
             }
-
-
         }
     }
 
@@ -279,15 +277,7 @@ public class MailSearch {
             Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-
-
-
-
         return ranges.toArray(new DateRange[0]);
-
-
-
-
     }
 
     private SPanel buildSearchPanel() {
@@ -297,34 +287,21 @@ public class MailSearch {
 
         SGridLayout panellay = new SGridLayout(2, 1);
 
-
         panellay.setPreferredSize(SDimension.FULLAREA);
         SPanel panel = new SPanel(panellay);
-        //panel.setAttribute(CSSProperty.WIDTH, "1000p");
+
         //TITLE
         SURLIcon brandlogo = new SURLIcon("../images/benno-logo-50px.png");
 
         brandlogo.setIconHeight(60);
-
         SLabel title = new SLabel(brandlogo);
 
-
         title.setStyle("title");
-        //title.setFont(new SFont("sans-serif", SFont.BOLD, 20));
         SPanel headerPanel = new SPanel(new SBorderLayout());
         headerPanel.setStyle("titlebar");
         headerPanel.setPreferredSize(new SDimension(0, 66));
-        //SURLIcon logo = new SURLIcon("../images/logo_lws.png");
-        //logo.setIconHeight(50);
-        //SLabel logoLabel = new SLabel(logo);
-        //logoLabel.setVerticalAlignment(SConstants.RIGHT_ALIGN);
-
-
-
-        //headerPanel.add(logoLabel, SBorderLayout.WEST);
         headerPanel.setAttribute(CSSProperty.WIDTH, "100%");
         titlePanel.add(headerPanel);
-
 
         title.setAttribute(CSSProperty.POSITION, "absolute");
         title.setAttribute(CSSProperty.TOP, "0");
@@ -351,10 +328,6 @@ public class MailSearch {
             public void doneRendering(SRenderEvent sre) {
             }
         });
-
-
-
-
 
         SIcon searchIcon = new SURLIcon("../images/tango/system-search.png");
         searchIcon.setIconHeight(18);
@@ -385,22 +358,13 @@ public class MailSearch {
 
         STableColumnModel cm = results.getColumnModel();
 
-
-
-
         for (int i = 0; i
                 < cm.getColumnCount(); i++) {
             STableColumn col = cm.getColumn(i);
             col.setHeaderValue(columnnames[i]);
-
-
-
-
         }
 
         results.setSelectionMode(STable.MULTIPLE_SELECTION);
-
-
         results.setDefaultRenderer(new SearchResultTableCellRenderer());
         results.addClickListener(3, new XTableClickListener() {
 
@@ -411,31 +375,17 @@ public class MailSearch {
                 mailview.setModal(true);
                 mailview.add(new MailViewFrame(searchcontroller.getTableModel().getRepository(), (String) searchcontroller.getTableModel().getValueAt(row, 5), searchcontroller, mailHandler));
                 mailview.setVisible(true);
-
-
-
-
             }
         });
-
 
         textField.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 doSearch.doClick();
-
-
-
-
             }
         });
 
         SGridLayout searchFieldLayout = new SGridLayout(1, 4);
-
-
-
-
-
 
         searchFieldLayout.setHgap(10);
         searchFieldLayout.setVgap(10);
@@ -454,54 +404,32 @@ public class MailSearch {
                 DateRange dr = (DateRange) itemevent.getItem();
                 searchcontroller.setDateRange(dr.from, dr.to);
                 doSearch.doClick();
-
-
-
-
             }
         });
 
         searchOptionsPanel.add(dateRangeChooser);
-
         searchField.add(searchOptionsPanel);
         searchField.add(doSearch);
         searchField.add(doExtendedSearch);
         titlePanel.add(searchField);
 
-
-
-
-
         doSearch.addActionListener(searchcontroller);
         doSearch.doClick();
-        //final SDialog extendedSearch = new SDialog(rootFrame);
+
         final SPanel extendedSearch = new SPanel();
         titlePanel.add(extendedSearch);
-        //extendedSearch.setClosable(true);
-        //extendedSearch.setModal(false);
-        //extendedSearch.setX(540);
-        //extendedSearch.setY(116);
 
         //needed to prevent error for empty dialog
         extendedSearch.setVisible(false);
-
         doExtendedSearch.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
                 if (extendedSearch.isVisible()) {
                     extendedSearch.removeAll();
                     extendedSearch.setVisible(false);
-
-
-
-
                 } else {
                     extendedSearch.add(new ExtendedSearchFrame(searchcontroller, textField));
                     extendedSearch.setVisible(true);
-
-
-
-
                 }
             }
         });
@@ -511,33 +439,21 @@ public class MailSearch {
 
                     public void actionPerformed(ActionEvent ev) {
                         searchcontroller.setQuery(((STextField) ev.getSource()).getText());
-
-
-
-
                     }
                 });
         titlePanel.add(searchresults);
         XScrollPane resultspane = new XScrollPane(results);
         resultspane.setVerticalExtent(25);
         Integer[] extents = {25, 30, 40, 50, 100, 1000};
-        //Integer[] extents = {};
+
         resultspane.setExtents(extents);
 
-
-
-
-
         if (mailHandler != null && mailHandler.isReady()) {
-
-
             final SMenuBar menuBar = new SMenuBar();
             menuBar.setAttribute(CSSProperty.WIDTH, "100px");
             menuBar.setAttribute(CSSProperty.FLOAT, "left");
 
             menuBar.setBorder(new SLineBorder(Color.LIGHT_GRAY, 2));
-
-
 
             final SMenu mailSendMenu = new SMenu("Aktion");
             mailSendMenu.setEnabled(false);
@@ -546,28 +462,14 @@ public class MailSearch {
                 public void valueChanged(ListSelectionEvent arg0) {
                     if (results.getSelectedRowCount() == 0) {
                         mailSendMenu.setEnabled(false);
-
-
-
-
                     } else {
                         mailSendMenu.setEnabled(true);
-
-
-
-
-
                     }
                 }
             });
             menuBar.setBackground(new Color(210, 210, 210));
 
-
-
             SMenu ownAddressMenu = new SMenu("Sende an eigene Adresse");
-
-
-
 
             for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
                 if (ga.getAuthority().startsWith("ROLE_MAIL_")) {
@@ -592,11 +494,7 @@ public class MailSearch {
                 }
             }
 
-
             mailSendMenu.add(ownAddressMenu);
-
-
-
 
             if (searchcontroller.isAdmin()) {
                 SMenuItem sendToItem = new SMenuItem("Sende an ...");
@@ -616,62 +514,38 @@ public class MailSearch {
                                 if (toAddress != null && !toAddress.getText().equals("")) {
                                     String[] toAddresses = {toAddress.getText()};
 
-
-
-
                                     try {
                                         for (int mailnum : results.getSelectedRows()) {
                                             InputStream is = searchcontroller.getTableModel().getRepository().getDocument(new MessageID((String) results.getModel().getValueAt(mailnum, 5)));
                                             mailHandler.sendMail(null, toAddresses, new String[0], new String[0], is);
-
-
-
-
                                         }
                                     } catch (MailSendFailureException ex) {
                                         SOptionPane.showMessageDialog(dialog, "Fehler: " + ex.getLocalizedMessage(), "Information", SOptionPane.ERROR_MESSAGE);
                                         Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
                                     }
                                     dialog.setVisible(false);
-
-
-
-
                                 }
 
                             }
                         });
 
                         SButton cancelButton = new SButton("Abbrechen");
-
                         buttonPanel.add(cancelButton);
-
                         cancelButton.addActionListener(new ActionListener() {
 
                             public void actionPerformed(ActionEvent e) {
                                 dialog.setVisible(false);
-
-
-
-
                             }
                         });
 
                         dialog.add(buttonPanel);
-
                         dialog.setVisible(true);
-
-
-
-
                     }
                 });
+
                 mailSendMenu.add(sendToItem);
-
-
-
-
             }
+
             final SMenuItem originalItem = new SMenuItem("Sende an Originalempfänger");
             originalItem.addActionListener(new ActionListener() {
 
@@ -681,61 +555,30 @@ public class MailSearch {
                         for (int mailnum : results.getSelectedRows()) {
                             InputStream is = searchcontroller.getTableModel().getRepository().getDocument(new MessageID((String) results.getModel().getValueAt(mailnum, 5)));
                             mailHandler.sendMail(null, null, null, null, is);
-
-
-
-
                         }
                     } catch (MailSendFailureException ex) {
                         SOptionPane.showMessageDialog(searchresults, "Fehler: " + ex.getLocalizedMessage(), "Information", SOptionPane.ERROR_MESSAGE);
                         Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
-
-
-
-
-
-
                         return;
                     }
                     SOptionPane.showMessageDialog(searchresults, "Erfolgreich versandte Emails: " + results.getSelectedRowCount(), "Information", SOptionPane.PLAIN_MESSAGE);
-
-
-
-
                 }
             });
+
             mailSendMenu.add(originalItem);
-
-
             menuBar.add(mailSendMenu);
-
             panel.add(menuBar);
-
-
-
-
         }
         panel.add(resultspane);
-//        
-//        SButton sendMail=new SButton("Mails weiterleiten");
-//        panel.setHorizontalAlignment(SConstants.LEFT_ALIGN);
-//        panel.add(sendMail);
-        //panel.add(results);
         titlePanel.add(panel);
+
         SPanel menu = createMenu(rootFrame);
         menu.setHorizontalAlignment(SConstants.RIGHT_ALIGN);
         menu.setVerticalAlignment(SConstants.TOP_ALIGN);
         menu.setAttribute(CSSProperty.MARGIN, "5");
         headerPanel.add(menu, SBorderLayout.NORTH);
 
-
-
-
         return titlePanel;
-
-
-
-
     }
 
     private SPanel createMenu(final SFrame frame) {
@@ -743,24 +586,13 @@ public class MailSearch {
         MenuLayout.setHgap(10);
         SPanel Menu = new SPanel(MenuLayout);
 
-        SButton logoutbutton = new SButton("Logout");
+        SButton logoutbutton = new SButton("Abmelden");
         SIcon logoutIcon = new SURLIcon("../images/tango/process-stop.png");
         logoutIcon.setIconHeight(18);
         logoutbutton.setIcon(logoutIcon);
 
         logoutbutton.addScriptListener(new JavaScriptListener(JavaScriptEvent.ON_CLICK, "window.location.href='../j_spring_security_logout'"));
         String emails = "";
-//        for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
-//            if (ga.getAuthority().startsWith("ROLE_MAIL_")) {
-//                emails = emails + " " + ga.getAuthority().substring(10);
-//            }
-//
-//        }
-//        username.setText(emails);   //for debugging
-//        Menu.add(username);
-
-
-
 
         if (searchcontroller.isAdmin()) {
             SIcon adminIcon = new SURLIcon("../images/tango/system-users.png");
@@ -776,28 +608,15 @@ public class MailSearch {
                     adminview.setModal(true);
                     adminview.add(new AdminFrame(searchcontroller));
                     adminview.setVisible(true);
-
-
-
-
                 }
             });
+
             Menu.add(admin);
-
-
-
-
         }
 
         Menu.add(logoutbutton);
         Menu.setHorizontalAlignment(SConstants.LEFT);
 
-
-
-
-
         return Menu;
-
-
     }
 }

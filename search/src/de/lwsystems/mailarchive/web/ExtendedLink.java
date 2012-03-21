@@ -27,25 +27,32 @@ import org.wings.io.Device;
  * @author wiermer
  */
 public class ExtendedLink extends Link {
-    
-    protected String title=null;
-        public ExtendedLink(String rel, String rev, String type, String target, URLResource urlSource,String title) {
-       super(rel,rev,type,target,urlSource);
-       this.title=title;
+
+    protected String title = null;
+
+    public ExtendedLink(String rel, String rev, String type, String target, URLResource urlSource, String title) {
+        super(rel, rev, type, target, urlSource);
+        this.title = title;
     }
+
     @Override
     public void write(Device d) throws IOException {
         d.print("<link");
-        if (rel != null)
+        if (rel != null) {
             d.print(" rel=\"" + rel + "\"");
-        if (rev != null)
+        }
+        if (rev != null) {
             d.print(" rev=\"" + rev + "\"");
-        if (type != null)
+        }
+        if (type != null) {
             d.print(" type=\"" + type + "\"");
-        if (target != null)
+        }
+        if (target != null) {
             d.print(" target=\"" + target + "\"");
-        if (title != null)
+        }
+        if (title != null) {
             d.print(" title=\"" + title + "\"");
+        }
         if (urlSource != null && urlSource.getURL() != null) {
             d.print(" href=\"");
             urlSource.getURL().write(d);
@@ -53,6 +60,4 @@ public class ExtendedLink extends Link {
         }
         d.print("/>");
     }
-
-
 }

@@ -14,37 +14,35 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
+ */
 
 /**
  *
  * @author rene
  */
-
 package de.lwsystems.mailarchive.web.domain;
-
-
 
 public enum UserRightEntity {
 
-    MAIL("Emailadresse","ROLE_MAIL_"),
-    QUERY("Suchanfrage","ROLE_QUERY_"),
-    ROLE("Rolle","ROLE_");
-    
+    MAIL("E-Mail-Adresse", "ROLE_MAIL_"),
+    QUERY("Suchanfrage", "ROLE_QUERY_"),
+    ROLE("Rolle", "ROLE_");
     private String Description;
     private String prefix;
 
-    UserRightEntity(String desc,String prefix) {
-        this.Description=desc;
-        this.prefix=prefix;
+    UserRightEntity(String desc, String prefix) {
+        this.Description = desc;
+        this.prefix = prefix;
     }
-     
+
     public String getDescription() {
         return Description;
     }
+
     public String getPrefix() {
         return prefix;
     }
+
     @Override
     public String toString() {
         return getDescription();

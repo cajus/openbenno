@@ -14,8 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
-
+ */
 package de.lwsystems.mailarchive.web.login;
 
 import java.util.HashSet;
@@ -28,7 +27,7 @@ import org.springframework.security.ldap.populator.DefaultLdapAuthoritiesPopulat
  *
  * @author rene
  */
-public class MailArchiveLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator{
+public class MailArchiveLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesPopulator {
 
     /**
      * 
@@ -39,7 +38,6 @@ public class MailArchiveLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesP
         super(arg0, arg1);
     }
 
- 
     /**
      * 
      * @param user
@@ -48,12 +46,10 @@ public class MailArchiveLdapAuthoritiesPopulator extends DefaultLdapAuthoritiesP
      */
     @Override
     protected Set getAdditionalRoles(org.springframework.ldap.core.DirContextOperations user,
-                                 String username) {
-        LinkedList<String> roles=new LinkedList<String>();
-        String[] mailaddresses =user.getStringAttributes("mail");
-        String[] aliasaddresses=user.getStringAttributes("alias");
-        return new HashSet(roles);
-    }    
-    
-
+            String username) {
+        LinkedList<String> roles = new LinkedList<String>();
+        String[] mailaddresses = user.getStringAttributes("mail");
+        String[] aliasaddresses = user.getStringAttributes("alias");
+        return new HashSet<String>(roles);
+    }
 }

@@ -14,7 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
+ */
 package de.lwsystems.mailarchive.web.resources;
 
 import de.lwsystems.mailarchive.repository.Repository;
@@ -140,15 +140,15 @@ public class MailPrintResource extends DynamicResource {
         osw.write("<BODY onload=\" window.print()\" >");
         osw.write("<table>");
         osw.write("<tr><td><b>Von:<b></td>");
-        osw.write("<td>"+from+"</td></tr>");
+        osw.write("<td>" + from + "</td></tr>");
         osw.write("<tr><td><b>An:<b></td>");
-        osw.write("<td>"+to+"</td></tr>");
-       osw.write("<tr><td><b>Datum:<b></td>");
-        osw.write("<td>"+sent+"</td></tr>");
-         osw.write("<tr><td><b>Betreff:<b></td>");
-        osw.write("<td>"+subject+"</td></tr>");
+        osw.write("<td>" + to + "</td></tr>");
+        osw.write("<tr><td><b>Datum:<b></td>");
+        osw.write("<td>" + sent + "</td></tr>");
+        osw.write("<tr><td><b>Betreff:<b></td>");
+        osw.write("<td>" + subject + "</td></tr>");
         osw.write("</table>");
-        osw.write("<pre>"+mainText+"</pre>");
+        osw.write("<pre>" + mainText + "</pre>");
         osw.write("</BODY>\n</HTML>");
         osw.flush();
         osw.close();

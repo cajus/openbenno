@@ -129,7 +129,6 @@ public class RestrictedQuery {
                 filters[i++] = f;
             }
             querywithrestrictions = new FilteredQuery(querywithrestrictions, new ChainedFilter(filters, ChainedFilter.ANDNOT));
-            //querywithrestrictions=new FilteredQuery(querywithrestrictions, new ChainedFilter(cfa.toArray(new Filter[1]), ChainedFilter.AND));
         }
 
         return querywithrestrictions;

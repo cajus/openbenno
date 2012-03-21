@@ -14,8 +14,8 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ package de.lwsystems.mailarchive.web;
-
+ */
+package de.lwsystems.mailarchive.web;
 
 import de.lwsystems.mailarchive.web.util.StringUtil;
 import de.lwsystems.mailarchive.web.domain.UserRightEntity;
@@ -84,9 +84,9 @@ class AdminFrame extends SPanel {
                 }
                 final SDialog confirmationDialog = new SDialog(doDeleteUser.getParentFrame());
                 confirmationDialog.setModal(true);
-                SGridLayout confirmationDialogLayout=new SGridLayout(2,1);
+                SGridLayout confirmationDialogLayout = new SGridLayout(2, 1);
                 confirmationDialog.setLayout(confirmationDialogLayout);
-                confirmationDialog.add(new SLabel("Sind sie sicher, dass die den Benutzer " + (String) userList.getSelectedValue() + " löschen wollen ?"));
+                confirmationDialog.add(new SLabel(String.format("Sind sie sicher, dass die den Benutzer '%s' löschen wollen ?", (String) userList.getSelectedValue())));
                 SButton okButton = new SButton("Ja");
                 SButton cancelButton = new SButton("Nein");
                 SGridLayout buttonPanelLayout = new SGridLayout(1, 2);
@@ -170,9 +170,9 @@ class AdminFrame extends SPanel {
         doAddRight.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent arg0) {
-                if (key.getSelectedItem()==UserRightEntity.MAIL&&!StringUtil.isEmailAdress(value.getText())) {
-                    SDialog warning=new SDialog(doAddRight.getParentFrame());
-                    warning.add(new SLabel("Keine gültige Emailadresse !"));
+                if (key.getSelectedItem() == UserRightEntity.MAIL && !StringUtil.isEmailAdress(value.getText())) {
+                    SDialog warning = new SDialog(doAddRight.getParentFrame());
+                    warning.add(new SLabel("Keine gültige E-Mail-Adresse!"));
                     warning.setModal(true);
                     warning.setVisible(true);
                     return;
@@ -212,14 +212,14 @@ class AdminFrame extends SPanel {
                 if (arg0.getSource() == doChangePassword && userList.getSelectedValue() == null) {
                     return;
                 }
-                final SDialog passwordDialog = new SDialog(doNewUser.getParentFrame(), "Passworteingabe");
+                final SDialog passwordDialog = new SDialog(doNewUser.getParentFrame(), "Passwort-Eingabe");
                 passwordDialog.setModal(true);
                 SGridLayout dialogLayout = new SGridLayout(5, 2);
                 dialogLayout.setHgap(10);
                 dialogLayout.setVgap(10);
                 SPanel dialogPanel = new SPanel(dialogLayout);
 
-                dialogPanel.add(new SLabel("Benutzer: "));
+                dialogPanel.add(new SLabel("Benutzer"));
                 final STextField usern = new STextField();
                 if (arg0.getSource() == doChangePassword) {
                     usern.setText((String) userList.getSelectedValue());
@@ -227,7 +227,7 @@ class AdminFrame extends SPanel {
                 }
                 usern.setHorizontalAlignment(SConstants.LEFT_ALIGN);
                 dialogPanel.add(usern);
-                dialogPanel.add(new SLabel("Passwort eingeben"));
+                dialogPanel.add(new SLabel("Passwort"));
                 final SPasswordField pass1 = new SPasswordField();
                 pass1.setHorizontalAlignment(SConstants.LEFT_ALIGN);
                 dialogPanel.add(pass1);
@@ -239,7 +239,7 @@ class AdminFrame extends SPanel {
                     pass1.setText(userinfomodel.userdetails.getPassword());
                     pass2.setText(userinfomodel.userdetails.getPassword());
                 }
-                SLabel textRoles = new SLabel("Rollen:");
+                SLabel textRoles = new SLabel("Rolle");
                 textRoles.setVerticalAlignment(SConstants.TOP_ALIGN);
                 dialogPanel.add(textRoles);
                 final SButtonGroup additionalRole = new SButtonGroup();
@@ -277,11 +277,11 @@ class AdminFrame extends SPanel {
                     public void actionPerformed(ActionEvent arg0) {
                         String warnings = "";
                         if (!pass1.getText().equals(pass2.getText())) {
-                            warnings=warnings.concat("Passwörter stimmen nicht überein\n\n");
+                            warnings = warnings.concat("Passwörter stimmen nicht überein\n\n");
                         }
                         if (usern.getText().contains(" ")) {
-                            warnings=warnings.concat("Benutzername enthält Leerzeichen\n\n");
-                        }                   
+                            warnings = warnings.concat("Benutzername enthält Leerzeichen\n\n");
+                        }
                         if (!warnings.equals("")) {
                             SDialog warning = new SDialog(doSubmit.getParentFrame());
                             warning.add(new SLabel(warnings));
@@ -289,18 +289,9 @@ class AdminFrame extends SPanel {
                             warning.setVisible(true);
                             return;
                         }
-                        String passwd=pass1.getText();
+                        String passwd = pass1.getText();
                         userdetailsmanager.changePassword(usern.getText(), passwd);
 
-
-//                        if (additionalRole.getSelection() == normalUser) {
-//                            userinfomodel.setRole(null);
-//                        } else if (additionalRole.getSelection() == auditorUser) {
-//                            userinfomodel.setRole("AUDITOR");
-//                        } else if (additionalRole.getSelection() == adminUser) {
-//                            userinfomodel.setRole("ADMIN");
-//                        }
-//                        userinfomodel.updateModelFromUsername(usern.getText());
                         userList.setListData(userdetailsmanager.getUserList());
                         passwordDialog.setVisible(false);
                     }
@@ -316,21 +307,19 @@ class AdminFrame extends SPanel {
         };
         doNewUser.addActionListener(userpasswdActionListener);
         doChangePassword.addActionListener(userpasswdActionListener);
+
         //whole Frame
         SPanel wholeFrame = new SPanel(new SGridLayout(1, 2));
         leftFrame.setVerticalAlignment(SConstants.TOP_ALIGN);
         rightFrame.setVerticalAlignment(SConstants.TOP_ALIGN);
         wholeFrame.add(leftFrame);
         wholeFrame.add(rightFrame);
+
         return wholeFrame;
     }
 
     public AdminFrame(SearchController s) {
         sc = s;
-        //STabbedPane tabbedPane = new STabbedPane();
-        //tabbedPane.add("Benutzer", createUserOptions());
-        //tabbedPane.add("Verzeichnisse", createDirectoryOptions());
-
         add(createUserOptions());
     }
 }

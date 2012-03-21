@@ -14,7 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
+ */
 package de.lwsystems.mailarchive.web.service;
 
 import de.lwsystems.mailarchive.web.RestrictedQuery;
@@ -27,7 +27,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
-
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
@@ -93,7 +92,7 @@ public class BennoSearchResource {
 
             srm.query(q);
             long rows = Math.min(srm.getRowCount(), maxdoc);
-            StringBuilder result = new StringBuilder("OK " + rows + " "+srm.getRowCount()+"\n");
+            StringBuilder result = new StringBuilder("OK " + rows + " " + srm.getRowCount() + "\n");
             for (int i = 0; i < rows; i++) {
                 try {
                     result.append(srm.getDataBlock(i));

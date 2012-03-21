@@ -14,7 +14,8 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ package de.lwsystems.mailarchive.web;
+ */
+package de.lwsystems.mailarchive.web;
 
 import de.lwsystems.mailarchive.web.util.StringUtil;
 import de.lwsystems.mailarchive.web.domain.Icons;
@@ -77,23 +78,23 @@ import org.wings.style.CSSProperty;
 public class MailViewFrame extends SPanel {
 
     String presentableText;
-    String selectionScript = "    var txt = '';" +
-            "if (window.getSelection) {txt = window.getSelection();} " +
-            "else if (document.getSelection) {txt = document.getSelection();}" +
-            " else if (document.selection) {txt = document.selection.createRange().text;    }" +
-            " document.getElementById('{0}').getElementsByTagName('input')[0].value = txt;" +
-            "document.getElementById('{0}').value = 'Hello!';";
+    String selectionScript = "    var txt = '';"
+            + "if (window.getSelection) {txt = window.getSelection();} "
+            + "else if (document.getSelection) {txt = document.getSelection();}"
+            + " else if (document.selection) {txt = document.selection.createRange().text;    }"
+            + " document.getElementById('{0}').getElementsByTagName('input')[0].value = txt;"
+            + "document.getElementById('{0}').value = 'Hello!';";
     String selectionScript2 = "var sl = (document.getElementById('{0}').value).substring(document.getElementById('{0}').selectionStart,document.getElementById('{0}').selectionEnd);document.getElementById('{1}').getElementsByTagName('input')[0].value = sl;";
-
     SPanel similarPanel;
     SLayoutManager similarPanelLayout;
+
     /**
      * 
      * @param desc
      * @return
      */
     private SLabel getDescLabel(String desc) {
-        
+
         SLabel label = new SLabel(desc);
         label.setVerticalAlignment(SConstants.TOP_ALIGN);
         return label;
@@ -107,11 +108,12 @@ public class MailViewFrame extends SPanel {
     private SComponent getContentLabel(String content) {
         SLabel label;
         String con;
-        if (content==null)
-            con="";
-        else
-            con=content;
-        
+        if (content == null) {
+            con = "";
+        } else {
+            con = content;
+        }
+
         if (con.length() < 100) {
             label = new SLabel(con);
         } else {
@@ -121,9 +123,8 @@ public class MailViewFrame extends SPanel {
         label.setVerticalAlignment(SConstants.TOP_ALIGN);
         label.setPreferredSize(new SDimension(800, 0));
         label.setWordWrap(true);
+
         return label;
-
-
     }
 
     /**
@@ -135,7 +136,7 @@ public class MailViewFrame extends SPanel {
     public MailViewFrame(final Repository repo, final String id, final SearchController searchc, final MailSendHandler mailHandler) {
         try {
             final SearchController sc = searchc;
-            Properties sessionprops=new Properties();
+            Properties sessionprops = new Properties();
             sessionprops.setProperty("mail.mime.address.strict", "false");
             MimeMessage msg = new MimeMessage(Session.getDefaultInstance(sessionprops), repo.getDocument(new MessageID(id)));
             setLayout(new SGridLayout(3, 1));
@@ -157,148 +158,141 @@ public class MailViewFrame extends SPanel {
             headerpanel.add(getContentLabel(StringUtil.joinPrettyMail(msg.getAllRecipients(), ", ")));
             headerpanel.add(getDescLabel("Datum:"));
             String s;
-            if (msg.getSentDate()==null)
-                s="";
-            else
-                s=msg.getSentDate().toString();
+            if (msg.getSentDate() == null) {
+                s = "";
+            } else {
+                s = msg.getSentDate().toString();
+            }
             headerpanel.add(getContentLabel(s));
             headerpanel.add(getDescLabel("Betreff:"));
             headerpanel.add(getContentLabel(msg.getSubject()));
 
-
             //Mail Sending
+            if (mailHandler != null && mailHandler.isReady()) {
 
-        if (mailHandler != null && mailHandler.isReady()) {
+                final SMenuBar menuBar = new SMenuBar();
+                menuBar.setAttribute(CSSProperty.WIDTH, "100px");
+                menuBar.setAttribute(CSSProperty.FLOAT, "left");
 
+                menuBar.setBorder(new SLineBorder(Color.LIGHT_GRAY, 2));
 
-            final SMenuBar menuBar = new SMenuBar();
-            menuBar.setAttribute(CSSProperty.WIDTH, "100px");
-            menuBar.setAttribute(CSSProperty.FLOAT, "left");
+                final SMenu mailSendMenu = new SMenu("Mail versenden");
+                menuBar.setBackground(new Color(210, 210, 210));
 
-            menuBar.setBorder(new SLineBorder(Color.LIGHT_GRAY, 2));
+                SMenu ownAddressMenu = new SMenu("Sende an eigene Adresse");
+                for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
+                    if (ga.getAuthority().startsWith("ROLE_MAIL_")) {
+                        final String mailAddress = ga.getAuthority().substring(10);
+                        final SMenuItem menuItem = new SMenuItem(mailAddress);
+                        menuItem.addActionListener(new ActionListener() {
 
+                            public void actionPerformed(ActionEvent arg0) {
+                                String[] toAddresses = {mailAddress};
+                                try {
 
-
-            final SMenu mailSendMenu = new SMenu("Mail verschicken");
- 
-            menuBar.setBackground(new Color(210, 210, 210));
-
-
-
-            SMenu ownAddressMenu = new SMenu("Sende an eigene Adresse");
-            for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
-                if (ga.getAuthority().startsWith("ROLE_MAIL_")) {
-                    final String mailAddress = ga.getAuthority().substring(10);
-                    final SMenuItem menuItem = new SMenuItem(mailAddress);
-                    menuItem.addActionListener(new ActionListener() {
-
-                        public void actionPerformed(ActionEvent arg0) {
-                            String[] toAddresses = {mailAddress};
-                            try {
-   
                                     InputStream is = sc.getTableModel().getRepository().getDocument(new MessageID(id));
                                     mailHandler.sendMail(null, toAddresses, new String[0], new String[0], is);
 
-                            } catch (MailSendFailureException ex) {
-                                SOptionPane.showMessageDialog(menuItem, "Fehler: " + ex.getLocalizedMessage(), "Information", SOptionPane.ERROR_MESSAGE);
-                                Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
+                                } catch (MailSendFailureException ex) {
+                                    SOptionPane.showMessageDialog(menuItem, "Fehler: " + ex.getLocalizedMessage(), "Information", SOptionPane.ERROR_MESSAGE);
+                                    Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                             }
-                        }
-                    });
-                    ownAddressMenu.add(menuItem);
+                        });
+                        ownAddressMenu.add(menuItem);
+                    }
                 }
-            }
 
 
-            mailSendMenu.add(ownAddressMenu);
-            if (sc.isAdmin()) {
-                SMenuItem sendToItem = new SMenuItem("Sende an ...");
-                sendToItem.addActionListener(new ActionListener() {
+                mailSendMenu.add(ownAddressMenu);
+                if (sc.isAdmin()) {
+                    SMenuItem sendToItem = new SMenuItem("Sende an ...");
+                    sendToItem.addActionListener(new ActionListener() {
 
-                    public void actionPerformed(ActionEvent arg0) {
-                        final SDialog dialog = new SDialog();
-                        dialog.add(new SLabel("Zieladresse:"));
-                        final STextField toAddress = new STextField();
-                        dialog.add(toAddress);
-                        SPanel buttonPanel = new SPanel(new SGridLayout(1, 2, 5, 5));
-                        SButton okButton = new SButton("OK");
-                        buttonPanel.add(okButton);
-                        okButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent arg0) {
+                            final SDialog dialog = new SDialog();
+                            dialog.add(new SLabel("Ziel-Adresse:"));
+                            final STextField toAddress = new STextField();
+                            dialog.add(toAddress);
+                            SPanel buttonPanel = new SPanel(new SGridLayout(1, 2, 5, 5));
+                            SButton okButton = new SButton("OK");
+                            buttonPanel.add(okButton);
+                            okButton.addActionListener(new ActionListener() {
 
-                            public void actionPerformed(ActionEvent e) {
-                                if (toAddress != null && toAddress.getText() != "") {
-                                    String[] toAddresses = {toAddress.getText()};
-                                    try {
-       
+                                public void actionPerformed(ActionEvent e) {
+                                    if (toAddress != null && toAddress.getText() != "") {
+                                        String[] toAddresses = {toAddress.getText()};
+                                        try {
+
                                             InputStream is = sc.getTableModel().getRepository().getDocument(new MessageID(id));
                                             mailHandler.sendMail(null, toAddresses, new String[0], new String[0], is);
 
-                                    } catch (MailSendFailureException ex) {
-                                        SOptionPane.showMessageDialog(dialog, "Fehler: " + ex.getLocalizedMessage(), "Information", SOptionPane.ERROR_MESSAGE);
-                                        Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
+                                        } catch (MailSendFailureException ex) {
+                                            SOptionPane.showMessageDialog(dialog, "Fehler: " + ex.getLocalizedMessage(), "Information", SOptionPane.ERROR_MESSAGE);
+                                            Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        dialog.setVisible(false);
                                     }
+
+                                }
+                            });
+
+                            SButton cancelButton = new SButton("Abbrechen");
+
+                            buttonPanel.add(cancelButton);
+
+                            cancelButton.addActionListener(new ActionListener() {
+
+                                public void actionPerformed(ActionEvent e) {
                                     dialog.setVisible(false);
                                 }
+                            });
 
-                            }
-                        });
+                            dialog.add(buttonPanel);
 
-                        SButton cancelButton = new SButton("Abbrechen");
+                            dialog.setVisible(true);
+                        }
+                    });
+                    mailSendMenu.add(sendToItem);
+                }
+                final SMenuItem originalItem = new SMenuItem("Sende an Original-Empfänger");
+                originalItem.addActionListener(new ActionListener() {
 
-                        buttonPanel.add(cancelButton);
+                    public void actionPerformed(ActionEvent arg0) {
 
-                        cancelButton.addActionListener(new ActionListener() {
-
-                            public void actionPerformed(ActionEvent e) {
-                                dialog.setVisible(false);
-                            }
-                        });
-
-                        dialog.add(buttonPanel);
-
-                        dialog.setVisible(true);
-                    }
-                });
-                mailSendMenu.add(sendToItem);
-            }
-            final SMenuItem originalItem = new SMenuItem("Sende an Originalempfänger");
-            originalItem.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent arg0) {
-
-                    try {
+                        try {
 
                             InputStream is = sc.getTableModel().getRepository().getDocument(new MessageID(id));
                             mailHandler.sendMail(null, null, null, null, is);
 
-                    } catch (MailSendFailureException ex) {
-                        SOptionPane.showMessageDialog(menuBar, "Fehler: " + ex.getLocalizedMessage(), "Information", SOptionPane.ERROR_MESSAGE);
-                        Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
-                        return;
+                        } catch (MailSendFailureException ex) {
+                            SOptionPane.showMessageDialog(menuBar, "Fehler: " + ex.getLocalizedMessage(), "Information", SOptionPane.ERROR_MESSAGE);
+                            Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
+                            return;
+                        }
+                        SOptionPane.showMessageDialog(menuBar, "E-Mail erfolgreich versendet ", "Information", SOptionPane.PLAIN_MESSAGE);
                     }
-                    SOptionPane.showMessageDialog(menuBar, "Email erfolgreich versandt ", "Information", SOptionPane.PLAIN_MESSAGE);
-                }
-            });
-            mailSendMenu.add(originalItem);
+                });
+                mailSendMenu.add(originalItem);
 
 
-            menuBar.add(mailSendMenu);
+                menuBar.add(mailSendMenu);
 
-            menupanel.add(menuBar);
-        }
+                menupanel.add(menuBar);
+            }
 
             //Download
             SIcon downloadIcon = new SURLIcon("../images/tango/document-save.png");
             downloadIcon.setIconHeight(18);
-            SButton download = new SButton("Email herunterladen");
+            SButton download = new SButton("E-Mail herunterladen");
             download.setIcon(downloadIcon);
             MailResource mailresource = new MailResource("eml", "text/rfc822");
             mailresource.setID(id);
             mailresource.setRepository(repo);
             download.addScriptListener(new JavaScriptListener(JavaScriptEvent.ON_CLICK, "window.location.href='" + this.getSession().getExternalizeManager().externalize(mailresource) + "'"));
             menupanel.add(download);
-            //Source
 
+            //Source
             SIcon sourceIcon = new SURLIcon("../images/tango/format-justify-fill.png");
             sourceIcon.setIconHeight(18);
             SButton source = new SButton("Original");
@@ -306,7 +300,7 @@ public class MailViewFrame extends SPanel {
             MailResource sourceresource = new MailResource("txt", "text/plain");
             sourceresource.setID(id);
             sourceresource.setRepository(repo);
-            source.addScriptListener(new JavaScriptListener(JavaScriptEvent.ON_CLICK, "window.open('" + this.getSession().getExternalizeManager().externalize(sourceresource) + "','"+"Original','menubar=yes,scrollbars=yes,width=1000,height=600')"));
+            source.addScriptListener(new JavaScriptListener(JavaScriptEvent.ON_CLICK, "window.open('" + this.getSession().getExternalizeManager().externalize(sourceresource) + "','" + "Original','menubar=yes,scrollbars=yes,width=1000,height=600')"));
 
             menupanel.add(source);
 
@@ -318,11 +312,14 @@ public class MailViewFrame extends SPanel {
             MailPrintResource mailprintresource = new MailPrintResource(this.getParentFrame());
             mailprintresource.setFrom(StringUtil.joinPrettyMail(msg.getFrom(), ",  "));
             mailprintresource.setTo(StringUtil.joinPrettyMail(msg.getAllRecipients(), ", "));
-            Date d=msg.getSentDate();
-            if (d!=null)
+            Date d = msg.getSentDate();
+
+            if (d != null) {
                 mailprintresource.setSent(d.toString());
-            else
+            } else {
                 mailprintresource.setSent("");
+            }
+
             mailprintresource.setSubject(msg.getSubject());
             //don't forget to mailprintresource.setMainText() after stripping HTML etc.
             print.addScriptListener(new JavaScriptListener(JavaScriptEvent.ON_CLICK, "window.location.href='" + this.getSession().getExternalizeManager().externalize(mailprintresource) + "'"));
@@ -330,7 +327,7 @@ public class MailViewFrame extends SPanel {
 
 
             //Similar documents
-            SButton similarlink = new SButton("Ähnliche Mails");
+            SButton similarlink = new SButton("Ähnliche E-Mails");
             SIcon similarIcon = new SURLIcon("../images/tango/system-search.png");
             similarIcon.setIconHeight(18);
             similarlink.setIcon(similarIcon);
@@ -339,19 +336,10 @@ public class MailViewFrame extends SPanel {
 
             similarlink.setHorizontalAlignment(SConstants.LEFT);
             menupanel.add(similarlink);
-
-//            //Marked text search
-//            SButton markedTextSearch = new SButton("Markierten Text suchen");
-//            menupanel.add(markedTextSearch);
-//            //DEBUG: show selection
-//            final  STextField selection = new STextField();
-//            menupanel.add(selection);
-//            selection.setVisible(false);
-            
             menupanel.setHorizontalAlignment(SConstants.LEFT);
 
             SPanel contentpanel = new SPanel();
-            //contentpanel.setPreferredSize(new SDimension(600, 600));
+            
             Object content = msg.getContent();
             if (content instanceof String) {
                 String contentString = (String) content;
@@ -362,13 +350,6 @@ public class MailViewFrame extends SPanel {
                     presentableText = contentString;
                 }
                 final STextArea textarea = new STextArea(presentableText);
-//                SComponent[] components = new SComponent[]{selection,textarea};
-//                markedTextSearch.addScriptListener(new JavaScriptListener(JavaScriptEvent.ON_CLICK, "document.getElementById('{0}').value=(document.getElementById('{1}').value).substring(document.getElementById('{1}').selectionStart,document.getElementById('{1}').selectionEnd); ", components));
-//                markedTextSearch.addActionListener(new ActionListener() {
-//                    public void actionPerformed(ActionEvent arg0) {
-//                        selection.getText();
-//                    }
-//                });
                 textarea.setEditable(false);
                 textarea.setColumns(110);
                 textarea.setRows(30);
@@ -379,25 +360,17 @@ public class MailViewFrame extends SPanel {
             } else {
                 contentpanel.add(new SLabel(content.toString()));
             }
-           similarPanelLayout= new SFlowLayout();
-           similarPanel = new SPanel(similarPanelLayout);
-           similarPanel.setPreferredSize(new SDimension(600,0));
-           similarPanel.setHorizontalAlignment(SConstants.LEFT_ALIGN);
-           
+            similarPanelLayout = new SFlowLayout();
+            similarPanel = new SPanel(similarPanelLayout);
+            similarPanel.setPreferredSize(new SDimension(600, 0));
+            similarPanel.setHorizontalAlignment(SConstants.LEFT_ALIGN);
+
             //Give stripped text to desired other functions
             mailprintresource.setMainText(presentableText);
             final String finalText = presentableText;
             similarlink.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent arg0) {
-                    //SDialog similars = new SDialog(getParentFrame());
-                    //similars.setTitle("Ähnliche Mails");
-                    //similars.setX(700);
-                    
-                  
-                    //similars.add(similarPanel);
-                    //similars.setVisible(true);
-                    
                     similarPanel.add(new SLabel("Suche..."));
                     TopScoreDocCollector tdc = sc.getSimilarMails(finalText, 11);
                     similarPanel.removeAll();
@@ -407,7 +380,7 @@ public class MailViewFrame extends SPanel {
                     }
                     ScoreDoc[] hits = tdc.topDocs().scoreDocs;
                     similarPanel.add(new SLabel("Ähnliche Ergebnisse:"));
-                    
+
                     for (int i = 1; i < hits.length; i++) {
                         float similarity = hits[i].score;
                         Document doc;
@@ -420,63 +393,58 @@ public class MailViewFrame extends SPanel {
                             Logger.getLogger(MailViewFrame.class.getName()).log(Level.SEVERE, null, ex);
                             continue;
                         }
-                        
+
                         SButton hitShow = new SButton(doc.getField("title").stringValue());
-                       hitShow.setHorizontalAlignment(SConstants.LEFT_ALIGN);
+                        hitShow.setHorizontalAlignment(SConstants.LEFT_ALIGN);
                         hitShow.setBackground(Color.WHITE);
-                     
-                               
+
                         final String idString = doc.getField("id").stringValue();
                         hitShow.addActionListener(new ActionListener() {
 
                             public void actionPerformed(ActionEvent arg0) {
-                                SDialog mailview = new SDialog(getParentFrame(), "Mail anzeigen", true);
+                                SDialog mailview = new SDialog(getParentFrame(), "E-Mail anzeigen", true);
                                 mailview.setX(20);
                                 mailview.setY(20);
                                 mailview.setModal(false);
-                                mailview.add(new MailViewFrame(repo, idString, sc,mailHandler));
+                                mailview.add(new MailViewFrame(repo, idString, sc, mailHandler));
                                 mailview.setVisible(true);
                             }
                         });
 
                         similarPanel.add(hitShow);
                     }
-
-
-
                 }
             });
+
             add(headerpanel);
             add(menupanel);
-            add(similarPanel); 
+            add(similarPanel);
             add(contentpanel);
-            
+
         } catch (IOException ex) {
             Logger.getLogger(MailViewFrame.class.getName()).log(Level.SEVERE, null, ex);
-            add(new SLabel("Eingabe/Ausgabefehler beim Zugriff auf die Mail "+id+" im Repository "+repo.getDescription()+"!\n " + ex.toString()));
+            add(new SLabel(String.format("Eingabe/Ausgabefehler beim Zugriff auf die E-Mail %s im Repository %s: %s", id, repo.getDescription(), ex.toString())));
         } catch (MessagingException ex) {
             Logger.getLogger(MailViewFrame.class.getName()).log(Level.SEVERE, null, ex);
-            add(
-                    new SLabel("Fehler beim Verarbeiten der Email "+id+"! " + ex.toString()));
+            add(new SLabel(String.format("Fehler beim Verarbeiten der E-Mail %s: %s", id, ex.toString())));
         } catch (NullPointerException ex) {
             Logger.getLogger(MailViewFrame.class.getName()).log(Level.SEVERE, null, ex);
-            add(new SLabel("Fehler! " + ex));
+            add(new SLabel(String.format("Fehler: %s", ex.toString())));
         } catch (Exception ex) {
-             Logger.getLogger(MailViewFrame.class.getName()).log(Level.SEVERE, null, ex);
-            add(new SLabel("Fehler! " + ex.toString()));
+            Logger.getLogger(MailViewFrame.class.getName()).log(Level.SEVERE, null, ex);
+            add(new SLabel(String.format("Fehler: %s", ex.toString())));
             ex.printStackTrace();
         }
     }
 
     private void flattenMultiParts(LinkedList<MimePart> parts, MimeMultipart multipart) throws MessagingException, IOException {
-        for (int i = 0; i <
-                multipart.getCount(); i++) {
+        for (int i = 0; i
+                < multipart.getCount(); i++) {
             if (multipart.getBodyPart(i).isMimeType("multipart/*")) {
                 flattenMultiParts(parts, (MimeMultipart) (multipart.getBodyPart(i).getContent()));
             } else {
                 parts.add((MimePart) multipart.getBodyPart(i));
             }
-
         }
 
     }

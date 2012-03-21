@@ -14,14 +14,15 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ package de.lwsystems.mailarchive.web.domain;
-
+ */
+package de.lwsystems.mailarchive.web.domain;
 
 /**
  *
  * @author wiermer
  */
 public class PopupLabelData {
+
     String shortdesc;
     String longdesc;
     String summary;
@@ -57,6 +58,7 @@ public class PopupLabelData {
     public String getSummary() {
         return summary;
     }
+
     /**
      * 
      * @param shortdesc
@@ -64,27 +66,26 @@ public class PopupLabelData {
     public void setShortDesc(String shortdesc) {
         this.shortdesc = shortdesc;
     }
-    
-    
+
     /**
      * 
      * @param shortdesc
      * @param longdesc
      */
-    public PopupLabelData(String shortdesc,String longdesc) {
-        this.shortdesc=shortdesc;
-        this.longdesc=longdesc;
-        this.summary="";
+    public PopupLabelData(String shortdesc, String longdesc) {
+        this.shortdesc = shortdesc;
+        this.longdesc = longdesc;
+        this.summary = "";
     }
-    
+
     /**
      * 
      * @param shortdesc
      * @param longdesc
      * @param summary
      */
-    public PopupLabelData(String shortdesc,String longdesc,String summary) {
-        this(shortdesc,longdesc);
-        this.summary=summary;
+    public PopupLabelData(String shortdesc, String longdesc, String summary) {
+        this(shortdesc, longdesc);
+        this.summary = summary;
     }
 }

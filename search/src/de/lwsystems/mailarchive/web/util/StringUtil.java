@@ -14,17 +14,11 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
+ */
 package de.lwsystems.mailarchive.web.util;
-
 
 import java.util.Collection;
 import java.util.Iterator;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.util.LinkedList;
 import javax.mail.Address;
 import javax.mail.internet.InternetAddress;
@@ -33,13 +27,12 @@ import javax.mail.internet.InternetAddress;
  *
  * @author rene
  */
-
 public class StringUtil {
-   
 
     public static String removeLinebreaks(String s) {
         return s.replaceAll("\\n|\\r", " ");
     }
+
     /**
      * 
      * @param s
@@ -71,26 +64,24 @@ public class StringUtil {
         if (s == null || s.length == 0) {
             return "";
         }
-        LinkedList ll = new LinkedList();
+        LinkedList<Object> ll = new LinkedList<Object>();
         for (Object o : s) {
             ll.add(o);
         }
         return join(ll, delimiter);
     }
 
-  
-
     public static String joinPrettyMail(Address[] a, String delimiter) {
         if (a == null || a.length == 0) {
             return "";
         }
-        LinkedList ll = new LinkedList();
+        LinkedList<Object> ll = new LinkedList<Object>();
         for (Address o : a) {
             if (o instanceof InternetAddress) {
-                InternetAddress ia=(InternetAddress)o;
-                String personal=ia.getPersonal();
-                
-                if (personal==null||personal.equals("")){
+                InternetAddress ia = (InternetAddress) o;
+                String personal = ia.getPersonal();
+
+                if (personal == null || personal.equals("")) {
                     ll.add(ia.getAddress());
                 } else {
                     ll.add(personal);
@@ -101,14 +92,14 @@ public class StringUtil {
         }
         return join(ll, delimiter);
     }
-    
+
     /**
      * 
      * @param e
      * @return
      */
     public static boolean isEmailAdress(String e) {
-        final String regex = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[_A-Za-z0-9-]+)" ; 
-        return e.matches(regex) ;
+        final String regex = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[_A-Za-z0-9-]+)";
+        return e.matches(regex);
     }
 }

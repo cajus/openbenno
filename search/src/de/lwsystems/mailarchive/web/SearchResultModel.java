@@ -32,8 +32,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -70,15 +68,14 @@ public class SearchResultModel extends AbstractTableModel {
     Archive archive;
     private Searcher indexSearcher;
     private Repository repo;
-    //private Hits hits;
     private TopFieldDocs hits;
     private String indexdir;
     private String repodir;
     private String[] columnnames = {"Von", "An", "Anhang", "Betreff", "Datum", "ID"};
     private DateFormat dateformat = new SimpleDateFormat("dd.MM.yy, HH:mm");
     private LinkedList<String> toExcludeMailAddresses = new LinkedList<String>();
-    //Default fields to be searched
-    private int summaryWidth=80;
+    private int summaryWidth = 80;
+
     /**
      * 
      * @param index
@@ -97,9 +94,10 @@ public class SearchResultModel extends AbstractTableModel {
         readExcludeAddresses();
 
     }
-      public SearchResultModel(String index, String repodir,int summarywidth) throws CorruptIndexException, IOException {
-         this(index,repodir);
-          summaryWidth=summarywidth;
+
+    public SearchResultModel(String index, String repodir, int summarywidth) throws CorruptIndexException, IOException {
+        this(index, repodir);
+        summaryWidth = summarywidth;
 
     }
 
@@ -144,12 +142,12 @@ public class SearchResultModel extends AbstractTableModel {
      * @throws org.apache.lucene.index.CorruptIndexException
      * @throws java.io.IOException
      */
-    public SearchResultModel(Archive archive,int summaryWidth) throws CorruptIndexException, IOException {
+    public SearchResultModel(Archive archive, int summaryWidth) throws CorruptIndexException, IOException {
         this.archive = archive;
         repo = archive.getRepository();
         indexSearcher = archive.getIndexSearcher();
         readExcludeAddresses();
-        this.summaryWidth=summaryWidth;
+        this.summaryWidth = summaryWidth;
     }
 
     public Archive getArchive() {
@@ -169,13 +167,13 @@ public class SearchResultModel extends AbstractTableModel {
         }
         Archive archive = (Archive) factory.getBean("archive");
 
-        Properties tableprops=new Properties();
-            try {
-                tableprops.load(new FileInputStream("/etc/benno/searchtable.properties"));
-            } catch (IOException ex) {
-                Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        return new SearchResultModel(archive,new Integer(tableprops.getProperty("summarywidth", "80")).intValue());
+        Properties tableprops = new Properties();
+        try {
+            tableprops.load(new FileInputStream("/etc/benno/searchtable.properties"));
+        } catch (IOException ex) {
+            Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return new SearchResultModel(archive, new Integer(tableprops.getProperty("summarywidth", "80")).intValue());
     }
 
     /**
@@ -202,7 +200,6 @@ public class SearchResultModel extends AbstractTableModel {
         return archive.getTerms();
     }
 
-
     /**
      * 
      * @param q
@@ -227,7 +224,7 @@ public class SearchResultModel extends AbstractTableModel {
 
         Sort sort = new Sort(new SortField("sent", SortField.STRING));
         hits = archive.getIndexSearcher().search(q, null, 10000, sort);
-        
+
         fireTableStructureChanged();
 
         return true;
@@ -235,15 +232,15 @@ public class SearchResultModel extends AbstractTableModel {
     }
 
     private Document getDocumentFromHit(int row) throws IOException {
-            if (row<hits.scoreDocs.length&&row>=0) {
+        if (row < hits.scoreDocs.length && row >= 0) {
             return getIndexSearcher().doc(hits.scoreDocs[row].doc);
-            }
-            else {
-                //create an empty document to prevent null return
-                Document doc=new Document();
-                return doc;
-            }
+        } else {
+            //create an empty document to prevent null return
+            Document doc = new Document();
+            return doc;
+        }
     }
+
     /**
      * 
      * @return
@@ -297,27 +294,26 @@ public class SearchResultModel extends AbstractTableModel {
         }
     }
 
-    private String getNullSafeValue(int row,String val,int index) throws IOException {
+    private String getNullSafeValue(int row, String val, int index) throws IOException {
 
-            String[] values = getDocumentFromHit(row).getValues(val);
-            if (values!=null&&index<values.length) {
-                return values[index];
-            }
-            return "";
-
+        String[] values = getDocumentFromHit(row).getValues(val);
+        if (values != null && index < values.length) {
+            return values[index];
         }
+        return "";
+
+    }
 
     public String getDataBlock(int row) throws CorruptIndexException, IOException, java.text.ParseException {
 
         StringBuilder sb = new StringBuilder();
         sb.append(StringUtil.join(getDocumentFromHit(row).getValues("header-From"), ",") + "\n");
         sb.append(StringUtil.removeLinebreaks(StringUtil.join(getDocumentFromHit(row).getValues("header-To"), ",")) + "\n");
-        sb.append(getNullSafeValue(row,"multipart",0) + "\n");
-        sb.append(getNullSafeValue(row,"title",0) + "\n");
-        sb.append(StringUtil.removeLinebreaks(getNullSafeValue(row,"summary",0)) + "\n");
-        //sb.append(dateformat.format(MetaDocument.getDateFormat().parse((String) getDocumentFromHit(row).getValues("sent")[0])+"\n"));
-        sb.append(getNullSafeValue(row,"sent",0) + "\n");
-        sb.append(getNullSafeValue(row,"id",0) + "\n");
+        sb.append(getNullSafeValue(row, "multipart", 0) + "\n");
+        sb.append(getNullSafeValue(row, "title", 0) + "\n");
+        sb.append(StringUtil.removeLinebreaks(getNullSafeValue(row, "summary", 0)) + "\n");
+        sb.append(getNullSafeValue(row, "sent", 0) + "\n");
+        sb.append(getNullSafeValue(row, "id", 0) + "\n");
         return sb.toString();
     }
 
@@ -340,12 +336,10 @@ public class SearchResultModel extends AbstractTableModel {
                     case 2:
                         return getDocumentFromHit(arg0).getValues("multipart")[0];
                     case 3:
-                        return titlePopup(nullsafe(getDocumentFromHit(arg0).getValues("title")), nullsafe(getDocumentFromHit(arg0).getValues("summary")),summaryWidth);
+                        return titlePopup(nullsafe(getDocumentFromHit(arg0).getValues("title")), nullsafe(getDocumentFromHit(arg0).getValues("summary")), summaryWidth);
                     case 4: {
                         String result = nullsafe(getDocumentFromHit(arg0).getValues("sent"));
 
-                        //attention: isEmpty is new in 1.6 !!!
-                        //if (result.isEmpty()) {
                         if (result.length() == 0) {
                             return "";
                         }
@@ -375,41 +369,7 @@ public class SearchResultModel extends AbstractTableModel {
 
     }
 
-    private PopupLabelData toAddressLabel(
-            int arg0) {
-
-//        String[] headerto;
-//        String[] to;
-//        Set<String> s = new LinkedHashSet<String>();
-//        try {
-//            headerto = getDocumentFromHit(arg0).getValues("header-To");
-//
-//
-//            for (String i : headerto) {
-//                s.add(i);
-//            }
-//        } catch (CorruptIndexException ex) {
-//            Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (IOException ex) {
-//            Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
-//        } catch (NullPointerException ex) {
-//        }
-//
-//        //commented out to prevent not so nice headers from the envelope. Maybe needed again for some milter solution
-////        try {
-////            to = getDocumentFromHit(arg0).getValues("to");
-////            for (String i : to) {
-////                s.add(i);
-////            }
-////
-////        } catch (CorruptIndexException ex) {
-////            Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
-////        } catch (IOException ex) {
-////            Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
-////        } catch (NullPointerException ex) {
-////        }
-//
-//        return popup(StringUtil.join(s.toArray(new String[0]), ","), 25);
+    private PopupLabelData toAddressLabel(int arg0) {
         try {
             return popup(StringUtil.join(toAddresses(arg0), ", "), 25);
         } catch (CorruptIndexException ex) {
@@ -417,6 +377,7 @@ public class SearchResultModel extends AbstractTableModel {
         } catch (IOException ex) {
             Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         return popup("", 25);
     }
 
@@ -425,19 +386,15 @@ public class SearchResultModel extends AbstractTableModel {
         try {
             String[] headerfrom = getDocumentFromHit(arg0).getValues("header-From");
 
-
             for (String i : headerfrom) {
-                 InternetAddress a;
+                InternetAddress a;
                 try {
                     a = new InternetAddress(i);
                     s.add(a.getAddress().toLowerCase());
                 } catch (AddressException ex) {
                     Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-
             }
-
 
         } catch (CorruptIndexException ex) {
             Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
@@ -445,10 +402,11 @@ public class SearchResultModel extends AbstractTableModel {
             Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NullPointerException ex) {
         }
+
         try {
             String[] from = getDocumentFromHit(arg0).getValues("from");
             for (String i : from) {
-                   InternetAddress a;
+                InternetAddress a;
                 try {
                     a = new InternetAddress(i);
                     s.add(a.getAddress().toLowerCase());
@@ -463,11 +421,13 @@ public class SearchResultModel extends AbstractTableModel {
             Logger.getLogger(SearchResultModel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NullPointerException ex) {
         }
-           for (String e:toExcludeMailAddresses) {
+
+        for (String e : toExcludeMailAddresses) {
             if (s.contains(e)) {
                 s.remove(e);
             }
-           }
+        }
+
         return popup(StringUtil.join(s.toArray(new String[0]), ","), 25);
 
     }
@@ -505,7 +465,7 @@ public class SearchResultModel extends AbstractTableModel {
 
         }
         //Also remove excludeAddresses from sender
-        for (String s:toExcludeMailAddresses) {
+        for (String s : toExcludeMailAddresses) {
             if (addresses.contains(s)) {
                 addresses.remove(s);
             }
@@ -522,13 +482,11 @@ public class SearchResultModel extends AbstractTableModel {
      */
     @Override
     public boolean isCellEditable(int row, int col) {
-//        if (col==2)
-//            return true;
         return false;
     }
 
-// Createns an Popup object with a long description an a shortened one for the
-//use inside a table
+    // Creates a Popup object with a long description an a shortened one for the
+    //use inside a table
     private PopupLabelData popup(String string, int length) {
         if (string == null || string.equals("")) {
             return new PopupLabelData("<Empty>", "<Empty>");
@@ -540,8 +498,8 @@ public class SearchResultModel extends AbstractTableModel {
 
         return new PopupLabelData(string, string);
     }
-    //Createns a title representation with a short summary
 
+    //Createns a title representation with a short summary
     private PopupLabelData titlePopup(String title, String summary, int length) {
         String popupText = summary;
         if (popupText == null) {
@@ -573,5 +531,4 @@ public class SearchResultModel extends AbstractTableModel {
         }
         return "";
     }
-
- }
+}

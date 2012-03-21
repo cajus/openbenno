@@ -14,10 +14,8 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
-
+ */
 package de.lwsystems.mailarchive.web;
-
 
 import de.lwsystems.mailarchive.web.domain.PopupLabelData;
 import java.awt.Color;
@@ -35,10 +33,6 @@ import org.wings.style.CSSProperty;
 import org.wings.table.SDefaultTableCellRenderer;
 import org.wings.table.STableCellRenderer;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author wiermer
@@ -46,7 +40,6 @@ import org.wings.table.STableCellRenderer;
 public class SearchResultTableCellRenderer implements STableCellRenderer {
 
     private SDefaultTableCellRenderer delegate = new SDefaultTableCellRenderer();
-
 
     /**
      * 
@@ -59,45 +52,46 @@ public class SearchResultTableCellRenderer implements STableCellRenderer {
      */
     public SComponent getTableCellRendererComponent(STable table, Object value, boolean isSelected, int row, int column) {
 
-
-        if (column==2) {//Attachments
-            SLabel attach=new SLabel();
+        if (column == 2) {//Attachments
+            SLabel attach = new SLabel();
             attach.setBorder(SDefaultBorder.INSTANCE);
             attach.setIconTextGap(0);
-            
-            attach.setPreferredSize(new SDimension(22,22));
-            if (((String)value).equals("true")) {
-                SIcon attachIcon=new SURLIcon("../images/tango/mail-attachment.png");
+
+            attach.setPreferredSize(new SDimension(22, 22));
+
+            if (((String) value).equals("true")) {
+                SIcon attachIcon = new SURLIcon("../images/tango/mail-attachment.png");
                 attachIcon.setIconWidth(16);
                 attach.setIcon(attachIcon);
                 attach.setHorizontalAlignment(SConstants.LEFT_ALIGN);
             }
             return attach;
         }
+
         if (value instanceof PopupLabelData) {
 
             SLabel text = new SLabel(((PopupLabelData) value).getShortDesc());
-            
+
             if (column == 3) { //Subject
                 text.setForeground(Color.BLACK);
                 text.setAttribute(CSSProperty.FONT_WEIGHT, "bold");
                 text.setToolTipText(((PopupLabelData) value).getLongDesc());
-                
-                SGridLayout showLayout=new SGridLayout(1,2);
+
+                SGridLayout showLayout = new SGridLayout(1, 2);
                 showLayout.setHgap(5);
-                SPanel show=new SPanel(showLayout);
-              
-                show.add(text); 
-                SLabel summary=new SLabel(((PopupLabelData) value).getSummary());
+                SPanel show = new SPanel(showLayout);
+
+                show.add(text);
+                SLabel summary = new SLabel(((PopupLabelData) value).getSummary());
                 summary.setForeground(Color.GRAY);
                 show.add(summary);
 
                 return show;
 
-
             } else {
                 text.setToolTipText(((PopupLabelData) value).getLongDesc());
             }
+
             return text;
         }
 

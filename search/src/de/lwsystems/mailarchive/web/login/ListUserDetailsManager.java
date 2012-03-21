@@ -14,8 +14,7 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ 
-
+ */
 package de.lwsystems.mailarchive.web.login;
 
 import java.util.List;
@@ -25,11 +24,11 @@ import org.springframework.security.userdetails.UserDetailsManager;
  * Interface to allow user browsing
  * @author rene
  */
-public interface ListUserDetailsManager extends UserDetailsManager{
+public interface ListUserDetailsManager extends UserDetailsManager {
+
     /**
      * 
      * @return
      */
     public List<String> getUserList();
-
 }

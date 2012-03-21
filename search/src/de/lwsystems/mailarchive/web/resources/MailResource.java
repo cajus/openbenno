@@ -14,8 +14,8 @@
  *   
  * You should have received a copy of the GNU General Public License  
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.  
- */ package de.lwsystems.mailarchive.web.resources;
-
+ */
+package de.lwsystems.mailarchive.web.resources;
 
 import de.lwsystems.mailarchive.repository.Repository;
 import de.lwsystems.mailarchive.repository.MessageID;
@@ -93,10 +93,10 @@ public class MailResource extends DynamicResource {
     public void write(Device out) throws IOException, ResourceNotFoundException {
         MessageID messageid = new MessageID(msgid);
         InputStream is = repo.getDocument(messageid);
-        DeviceOutputStream os=new DeviceOutputStream(out);
-        byte[] buf=new byte[4096];
+        DeviceOutputStream os = new DeviceOutputStream(out);
+        byte[] buf = new byte[4096];
         int nlength;
-        while ((nlength=is.read(buf)) != -1) {
+        while ((nlength = is.read(buf)) != -1) {
             os.write(buf, 0, nlength);
         }
         os.flush();
