@@ -29,10 +29,16 @@ TABLE.SButton,TABLE.SButton_form {
 }
 
 .XTable tr.even {
- background-color: #EFEFEF;
+ background-color: #F5F5F5;
 }
 .XTable tr.odd {
  background-color: #FFFFFF;
 }
 
-
+.XTable th {
+  background-color:#F5F5F5;
+  color:#444;
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8F8F8', endColorstr='#EEE')";
+  background: -webkit-gradient(linear, 0 0, 0 100%, from(#F0F0F0), to(#E0E0E0));
+  background: -moz-linear-gradient(top, #F0F0F0, #E0E0E0);
+}
