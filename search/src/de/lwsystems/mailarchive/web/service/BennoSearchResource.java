@@ -114,7 +114,7 @@ public class BennoSearchResource {
     }
 
     /**
-     * PUT method for updating messageor creating an instance of BennoSearchResource
+     * PUT method for updating message or creating an instance of BennoSearchResource
      * @param content representation for the resource
      * @return an HTTP response with content of the updated or created resource.
      */
