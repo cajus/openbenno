@@ -65,7 +65,9 @@ import org.apache.lucene.search.SortField;
  */
 public class SearchResultModel extends AbstractTableModel {
 
-    Archive archive;
+    static Archive archive=null;
+    static Properties tableprops=null;
+
     private Searcher indexSearcher;
     private Repository repo;
     private TopFieldDocs hits;
@@ -158,21 +160,26 @@ public class SearchResultModel extends AbstractTableModel {
      * 
      * @return 
      */
-    public static SearchResultModel getDefaultInstance(ServletContext servletContext) throws CorruptIndexException, IOException {
-        XmlBeanFactory factory = new XmlBeanFactory(new ServletContextResource(servletContext, "WEB-INF/applicationContext-index.xml"));
-        PropertyOverrideConfigurer configurer = new PropertyOverrideConfigurer();
-        if (new File("/etc/benno/archive.properties").exists()) {
-            configurer.setLocation(new FileSystemResource("/etc/benno/archive.properties"));
-            configurer.postProcessBeanFactory(factory);
-        }
-        Archive archive = (Archive) factory.getBean("archive");
 
-        Properties tableprops = new Properties();
-        try {
-            tableprops.load(new FileInputStream("/etc/benno/searchtable.properties"));
-        } catch (IOException ex) {
-            Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public synchronized static SearchResultModel getDefaultInstance(ServletContext servletContext) throws CorruptIndexException, IOException {
+	if (archive==null) {
+            XmlBeanFactory factory = new XmlBeanFactory(new ServletContextResource(servletContext, "WEB-INF/applicationContext-index.xml"));
+            PropertyOverrideConfigurer configurer = new PropertyOverrideConfigurer();
+            if (new File("/etc/benno/archive.properties").exists()) {
+                configurer.setLocation(new FileSystemResource("/etc/benno/archive.properties"));
+                configurer.postProcessBeanFactory(factory);
+            }
+	    archive = (Archive) factory.getBean("archive");
+	}
+
+        if (tableprops==null) {
+	    tableprops = new Properties();
+            try {
+                tableprops.load(new FileInputStream("/etc/benno/searchtable.properties"));
+            } catch (IOException ex) {
+                Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+	}
         return new SearchResultModel(archive, new Integer(tableprops.getProperty("summarywidth", "80")).intValue());
     }
 
@@ -531,4 +538,14 @@ public class SearchResultModel extends AbstractTableModel {
         }
         return "";
     }
+
+    public void close() {
+        if (indexSearcher!=null) {
+            try {
+                indexSearcher.close();
+            } catch (IOException ex) {
+            }
+        }
+    }
+
 }

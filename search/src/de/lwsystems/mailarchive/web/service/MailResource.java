@@ -44,22 +44,6 @@ public class MailResource {
     private UriInfo context;
     @Context
     private ServletContext servletContext;
-    private SearchResultModel srm = null;
-
-    private void init() {
-        if (srm == null) {
-            try {
-                srm = SearchResultModel.getDefaultInstance(servletContext);
-
-            } catch (CorruptIndexException ex) {
-                Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-
-            } catch (IOException ex) {
-                Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-
-            }
-        }
-    }
 
     /** Creates a new instance of MailResource */
     public MailResource() {
@@ -72,24 +56,40 @@ public class MailResource {
     @GET
     @Produces("message/rfc822")
     public String getXml(@PathParam("id") String id) {
+        SearchResultModel srm = null;
+
         if (servletContext == null) {
             return "No servlet context!";
         }
-        init();
-        if (srm == null) {
-            return "ERROR No SearchResultModel created! Servlet Context Path: " + servletContext.getServletContextName() + "\n";
+        try {
+            srm = SearchResultModel.getDefaultInstance(servletContext);
+
+
+            if (srm == null) {
+                return "ERROR No SearchResultModel created! Servlet Context Path: " + servletContext.getServletContextName() + "\n";
+            }
+
+            StringBuilder sb = new StringBuilder();
+            BufferedInputStream bin = new BufferedInputStream(srm.getRepository().getDocument(new MessageID(id)));
+            int ch = 0;
+            try {
+                while ((ch = bin.read()) > -1) {
+                    sb.append((char) ch);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MailResource.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
+            return sb.toString();
+        } catch (CorruptIndexException ex) {
+            Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+
+        } catch (IOException ex) {
+            Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+
+        } finally {
         }
 
-        StringBuilder sb = new StringBuilder();
-        BufferedInputStream bin = new BufferedInputStream(srm.getRepository().getDocument(new MessageID(id)));
-        int ch = 0;
-        try {
-            while ((ch = bin.read()) > -1) {
-                sb.append((char) ch);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(MailResource.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return sb.toString();
+        return "";
     }
 }

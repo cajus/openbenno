@@ -44,23 +44,6 @@ public class ContextResource {
     private UriInfo context;
     @Context
     private ServletContext servletContext;
-    private SearchResultModel srm = null;
-    private UsefulTermsExtractor ute;
-
-    private void init() {
-        if (srm == null) {
-            try {
-                srm = SearchResultModel.getDefaultInstance(servletContext);
-                ute = new UsefulTermsExtractor(srm.getArchive());
-            } catch (CorruptIndexException ex) {
-                Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-
-            } catch (IOException ex) {
-                Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-
-            }
-        }
-    }
 
     void appendLines(StringBuilder sb, Set<String> s) {
         for (String str : s) {
@@ -75,13 +58,31 @@ public class ContextResource {
     @GET
     @Produces("text/plain")
     public String getText() {
-        init();
-        StringBuilder sb = new StringBuilder();
-        sb.append("@@YEARS\n");
-        appendLines(sb, ute.getYears());
-        sb.append("@@FROM\n");
-        appendLines(sb, ute.getFromAddresses());
-        return sb.toString();
+        SearchResultModel srm = null;
+        UsefulTermsExtractor ute = null;
 
+        try {
+            srm = SearchResultModel.getDefaultInstance(servletContext);
+            ute = new UsefulTermsExtractor(srm.getArchive());
+
+
+            //return new ContextConverter(ute.getYears(), ute.getToAddresses(),ute.getFromAddresses(),ute.getToDomains(),ute.getFromDomains());
+            StringBuilder sb = new StringBuilder();
+            sb.append("@@YEARS\n");
+            appendLines(sb, ute.getYears());
+            sb.append("@@FROM\n");
+            appendLines(sb, ute.getFromAddresses());
+          
+            return sb.toString();
+
+        } catch (CorruptIndexException ex) {
+            Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+
+        } catch (IOException ex) {
+            Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+
+        } finally {
+        }
+        return "";
     }
 }

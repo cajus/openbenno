@@ -50,23 +50,6 @@ public class BennoSearchResource {
     private Request request;
     @Context
     private ServletContext servletContext;
-    private SearchResultModel srm = null;
-    private String exString = "";
-
-    private void init() {
-        if (srm == null) {
-            try {
-                srm = SearchResultModel.getDefaultInstance(servletContext);
-                exString = "Well done!";
-            } catch (CorruptIndexException ex) {
-                Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-                exString = exString.concat(ex.toString());
-            } catch (IOException ex) {
-                Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-                exString = exString.concat(ex.toString());
-            }
-        }
-    }
 
     /**
      * Retrieves representation of an instance of de.lwsystems.mailarchive.web.service.BennoSearchResource
@@ -75,45 +58,59 @@ public class BennoSearchResource {
     @GET
     @Produces("text/plain")
     public String getXml(@PathParam("limit") int maxdoc, @PathParam("query") String query) {
+        SearchResultModel srm = null;
+        String exString = "";
+
         if (servletContext == null) {
             return "No servlet context!";
         }
-        init();
-        if (srm == null) {
-            return "ERROR No SearchResultModel created! Servlet Context Path: " + servletContext.getServletContextName() + "\nExceptions: " + exString;
-
-        }
-        try {
-
-            Query q = RestrictedQuery.getParsedQueryWithRestrictions(query);
-            if (q == null) {
-                return "ERROR No restricted q could be constructed from " + query;
+	try {
+            srm = SearchResultModel.getDefaultInstance(servletContext);
+            exString = "Well done!";
+            if (srm == null) {
+                return "ERROR No SearchResultModel created! Servlet Context Path: " + servletContext.getServletContextName() + "\nExceptions: " + exString;
             }
 
-            srm.query(q);
-            long rows = Math.min(srm.getRowCount(), maxdoc);
-            StringBuilder result = new StringBuilder("OK " + rows + " " + srm.getRowCount() + "\n");
-            for (int i = 0; i < rows; i++) {
-                try {
-                    result.append(srm.getDataBlock(i));
-                } catch (CorruptIndexException ex) {
-                    Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (java.text.ParseException ex) {
-                    Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+	    try {
+                Query q = RestrictedQuery.getParsedQueryWithRestrictions(query);
+                if (q == null) {
+                    return "ERROR No restricted q could be constructed from " + query;
                 }
-            }
-            return result.toString();
-        } catch (ParseException ex) {
 
+                srm.query(q);
+                long rows = Math.min(srm.getRowCount(), maxdoc);
+                StringBuilder result = new StringBuilder("OK " + rows + " " + srm.getRowCount() + "\n");
+                for (int i = 0; i < rows; i++) {
+                    try {
+                        result.append(srm.getDataBlock(i));
+                    } catch (CorruptIndexException ex) {
+                        Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
+                        Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (java.text.ParseException ex) {
+                        Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                return result.toString();
+            } catch (ParseException ex) {
+                Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+                return "Parse Exception: " + ex;
+            } catch (IOException ex) {
+                Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+                return ("I/O Exception: " + ex);
+            }
+
+        } catch (CorruptIndexException ex) {
             Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-            return "Parse Exception: " + ex;
+            exString = exString.concat(ex.toString());
         } catch (IOException ex) {
             Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
-            return ("I/O Exception: " + ex);
-        }
+            exString = exString.concat(ex.toString());
+        } finally {
+	}
 
+        return "";
     }
 
     /**
