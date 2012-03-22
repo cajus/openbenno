@@ -82,10 +82,10 @@ public class MailResource {
            
             return sb.toString();
         } catch (CorruptIndexException ex) {
-            Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(MailResource.class.getName()).log(Level.SEVERE, null, ex);
 
         } catch (IOException ex) {
-            Logger.getLogger(BennoSearchResource.class.getName()).log(Level.SEVERE, null, ex);
+	    Logger.getLogger(MailResource.class.getName()).log(Level.SEVERE, null, ex);
 
         } finally {
         }
