@@ -20,6 +20,7 @@ package de.lwsystems.mailarchive.web;
 import de.lwsystems.mailarchive.web.util.StringUtil;
 import de.lwsystems.mailarchive.web.domain.PopupLabelData;
 import de.lwsystems.mailarchive.web.domain.AddressList;
+import de.lwsystems.mailarchive.repository.SingleIndexArchive;
 import de.lwsystems.mailarchive.repository.Archive;
 import de.lwsystems.mailarchive.parser.MetaDocument;
 import de.lwsystems.mailarchive.repository.Repository;
@@ -45,6 +46,7 @@ import javax.swing.table.AbstractTableModel;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.springframework.beans.factory.config.PropertyOverrideConfigurer;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
@@ -63,9 +65,10 @@ import org.apache.lucene.search.SortField;
  */
 public class SearchResultModel extends AbstractTableModel {
 
-    static Archive archive = null;
-    static Properties tableprops = null;
+    static Archive archive=null;
+    static Properties tableprops=null;
 
+    private Searcher indexSearcher;
     private Repository repo;
     private TopFieldDocs hits;
     private String indexdir;
@@ -75,6 +78,30 @@ public class SearchResultModel extends AbstractTableModel {
     private LinkedList<String> toExcludeMailAddresses = new LinkedList<String>();
     private int summaryWidth = 80;
 
+    /**
+     * 
+     * @param index
+     * @param repodir
+     * @throws org.apache.lucene.index.CorruptIndexException
+     * @throws java.io.IOException
+     */
+    public SearchResultModel(String index, String repodir) throws CorruptIndexException, IOException {
+        SingleIndexArchive sarchive = new SingleIndexArchive(indexdir, repodir, true);
+        sarchive.setIndexDir(index);
+        sarchive.setRepositoryDir(repodir);
+        this.archive = sarchive;
+        repo = archive.getRepository();
+        indexSearcher = archive.getIndexSearcher();
+        indexdir = index;
+        readExcludeAddresses();
+
+    }
+
+    public SearchResultModel(String index, String repodir, int summarywidth) throws CorruptIndexException, IOException {
+        this(index, repodir);
+        summaryWidth = summarywidth;
+
+    }
 
     private void readExcludeAddresses() {
 
@@ -118,11 +145,12 @@ public class SearchResultModel extends AbstractTableModel {
      * @throws java.io.IOException
      */
     public SearchResultModel(Archive archive, int summaryWidth) throws CorruptIndexException, IOException {
-        SearchResultModel.archive = archive;
-        this.repo = archive.getRepository();
+        this.archive = archive;
+        repo = archive.getRepository();
+        indexSearcher = archive.getIndexSearcher();
         readExcludeAddresses();
         this.summaryWidth = summaryWidth;
-     }
+    }
 
     public Archive getArchive() {
         return archive;
@@ -134,17 +162,17 @@ public class SearchResultModel extends AbstractTableModel {
      */
 
     public synchronized static SearchResultModel getDefaultInstance(ServletContext servletContext) throws CorruptIndexException, IOException {
-        if (archive == null) {
+	if (archive==null) {
             XmlBeanFactory factory = new XmlBeanFactory(new ServletContextResource(servletContext, "WEB-INF/applicationContext-index.xml"));
             PropertyOverrideConfigurer configurer = new PropertyOverrideConfigurer();
             if (new File("/etc/benno/archive.properties").exists()) {
                 configurer.setLocation(new FileSystemResource("/etc/benno/archive.properties"));
                 configurer.postProcessBeanFactory(factory);
             }
-            archive = (Archive) factory.getBean("archive");
+	    archive = (Archive) factory.getBean("archive");
 	}
 
-        if (tableprops == null) {
+        if (tableprops==null) {
 	    tableprops = new Properties();
             try {
                 tableprops.load(new FileInputStream("/etc/benno/searchtable.properties"));
@@ -167,8 +195,8 @@ public class SearchResultModel extends AbstractTableModel {
      * 
      * @return
      */
-    public Searcher getIndexSearcher() throws CorruptIndexException, IOException {
-        return SearchResultModel.archive.getIndexSearcher();
+    public Searcher getIndexSearcher() {
+        return indexSearcher;
     }
 
     /**
@@ -187,10 +215,27 @@ public class SearchResultModel extends AbstractTableModel {
      * @throws java.io.IOException
      */
     public boolean query(Query q) throws ParseException, IOException {
+
+
+        if (indexSearcher == null) {
+            return false;
+        }
+
+        if (indexSearcher instanceof IndexSearcher) {
+            if (!((IndexSearcher) indexSearcher).getIndexReader().isCurrent()) {
+                indexSearcher = archive.updateSearcher();
+            }
+        } else {
+            indexSearcher = archive.updateSearcher();
+        }
+
         Sort sort = new Sort(new SortField("sent", SortField.STRING, true));
         hits = archive.getIndexSearcher().search(q, null, 10000, sort);
+
         fireTableStructureChanged();
+
         return true;
+
     }
 
     private Document getDocumentFromHit(int row) throws IOException {
@@ -267,14 +312,15 @@ public class SearchResultModel extends AbstractTableModel {
     }
 
     public String getDataBlock(int row) throws CorruptIndexException, IOException, java.text.ParseException {
+
         StringBuilder sb = new StringBuilder();
-        sb.append(StringUtil.join(getDocumentFromHit(row).getValues("header-From"), ",")).append("\n");
-        sb.append(StringUtil.removeLinebreaks(StringUtil.join(getDocumentFromHit(row).getValues("header-To"), ","))).append("\n");
-        sb.append(getNullSafeValue(row, "multipart", 0)).append("\n");
-        sb.append(getNullSafeValue(row, "title", 0)).append("\n");
-        sb.append(StringUtil.removeLinebreaks(getNullSafeValue(row, "summary", 0))).append("\n");
-        sb.append(getNullSafeValue(row, "sent", 0)).append("\n");
-        sb.append(getNullSafeValue(row, "id", 0)).append("\n");
+        sb.append(StringUtil.join(getDocumentFromHit(row).getValues("header-From"), ",") + "\n");
+        sb.append(StringUtil.removeLinebreaks(StringUtil.join(getDocumentFromHit(row).getValues("header-To"), ",")) + "\n");
+        sb.append(getNullSafeValue(row, "multipart", 0) + "\n");
+        sb.append(getNullSafeValue(row, "title", 0) + "\n");
+        sb.append(StringUtil.removeLinebreaks(getNullSafeValue(row, "summary", 0)) + "\n");
+        sb.append(getNullSafeValue(row, "sent", 0) + "\n");
+        sb.append(getNullSafeValue(row, "id", 0) + "\n");
         return sb.toString();
     }
 
@@ -494,6 +540,12 @@ public class SearchResultModel extends AbstractTableModel {
     }
 
     public void close() {
+        if (indexSearcher!=null) {
+            try {
+                indexSearcher.close();
+            } catch (IOException ex) {
+            }
+        }
     }
 
 }

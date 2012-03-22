@@ -280,33 +280,27 @@ public class SearchController implements ActionListener, SRequestListener {
             q.add(getRestrictedQuery(), BooleanClause.Occur.MUST);
         }
 
-        try {
-            Searcher searcher = tablemodel.getIndexSearcher();
-            if (searcher instanceof IndexSearcher) {
-                MoreLikeThis mlt = new MoreLikeThis(((IndexSearcher) searcher).getIndexReader());
-                mlt.setAnalyzer(new StandardAnalyzer(Version.LUCENE_24));
-                String[] fields = {"text"};
-                mlt.setFieldNames(fields);
-                try {
-                    q.add(mlt.like(new StringReader(toCompare)), BooleanClause.Occur.MUST);
-                } catch (IOException ex) {
-                    Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                try {
-                    TopScoreDocCollector tdc = TopScoreDocCollector.create(numofhits, true);
-                    tablemodel.getIndexSearcher().search(q, tdc);
-                    return tdc;
-                } catch (IOException ex) {
-                    Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
-                    return null;
-                }
+        Searcher searcher = tablemodel.getIndexSearcher();
+        if (searcher instanceof IndexSearcher) {
+            MoreLikeThis mlt = new MoreLikeThis(((IndexSearcher) searcher).getIndexReader());
+            mlt.setAnalyzer(new StandardAnalyzer(Version.LUCENE_24));
+            String[] fields = {"text"};
+            mlt.setFieldNames(fields);
+            try {
+                q.add(mlt.like(new StringReader(toCompare)), BooleanClause.Occur.MUST);
+            } catch (IOException ex) {
+                Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (CorruptIndexException ex) {
-            Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            try {
+                TopScoreDocCollector tdc = TopScoreDocCollector.create(numofhits,true);
+                tablemodel.getIndexSearcher().search(q, tdc);
 
+                return tdc;
+            } catch (IOException ex) {
+                Logger.getLogger(SearchController.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        }
         return null;
     }
 
