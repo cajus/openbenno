@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.NavigableSet;
 import javax.security.auth.login.LoginContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.DefaultComboBoxModel;
@@ -114,6 +115,7 @@ public class MailSearch {
     MailSendHandler mailHandler;
     Collection<Filter> spamFilters = null;
     Properties tableprops = new Properties();
+    Properties searchprops = new Properties();
 
     /** This is the entry point of you application as denoted in your web.xml */
     public MailSearch() {
@@ -197,6 +199,12 @@ public class MailSearch {
             Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        try {
+            tableprops.load(new FileInputStream("/etc/benno/search.properties"));
+        } catch (IOException ex) {
+            Logger.getLogger(MailSearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         File spamQueriesFile = new File("/etc/benno/exclude-queries");
         if (spamQueriesFile.exists()) {
 
@@ -265,11 +273,19 @@ public class MailSearch {
             ranges.add(new DateRange("letztes Jahr", new Date(System.currentTimeMillis() - 365 * millisPerDay), null));
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
-            for (String y : searchcontroller.getYears()) {
+
+
+            int history_max_years = Integer.parseInt(searchprops.getProperty("history_max_years", "-1"));
+            int count = 0;
+            NavigableSet<String> yearlist = (NavigableSet<String>) searchcontroller.getYears();
+            for (String y : yearlist.descendingSet()) {
                 Date thisYear = yearDateFormat.parse(y);
                 Integer nexty = (new Integer(y)) + 1;
                 if (cal.getTime().after(thisYear)) {
-                    ranges.add(new DateRange(y, thisYear, yearDateFormat.parse(nexty.toString())));
+                    if ((history_max_years > 0 && count < history_max_years) || history_max_years == -1) {
+                        ranges.add(new DateRange(y, thisYear, yearDateFormat.parse(nexty.toString())));
+                    }
+                    count++;
                 }
             }
 
