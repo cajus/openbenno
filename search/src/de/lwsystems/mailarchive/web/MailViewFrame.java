@@ -322,7 +322,7 @@ public class MailViewFrame extends SPanel {
 
             mailprintresource.setSubject(msg.getSubject());
             //don't forget to mailprintresource.setMainText() after stripping HTML etc.
-            print.addScriptListener(new JavaScriptListener(JavaScriptEvent.ON_CLICK, "window.location.href='" + this.getSession().getExternalizeManager().externalize(mailprintresource) + "'"));
+            print.addScriptListener(new JavaScriptListener(JavaScriptEvent.ON_CLICK, "window.open('" + this.getSession().getExternalizeManager().externalize(mailprintresource) + "');return false;"));
             menupanel.add(print);
 
 

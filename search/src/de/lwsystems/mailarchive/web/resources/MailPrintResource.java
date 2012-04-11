@@ -137,7 +137,7 @@ public class MailPrintResource extends DynamicResource {
         OutputStreamWriter osw = new OutputStreamWriter(os, "UTF8");
         osw.write("<HTML>\n ");
         osw.write("<head><META HTTP-EQUIV=\"content-type\" CONTENT=\"text/html; charset=utf-8\"></head>");
-        osw.write("<BODY onload=\" window.print()\" >");
+        osw.write("<BODY onload=\"window.onfocus=function(){window.close();};window.print();\" >");
         osw.write("<table>");
         osw.write("<tr><td><b>Von:<b></td>");
         osw.write("<td>" + from + "</td></tr>");
