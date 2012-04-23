@@ -7,12 +7,12 @@ up this repository to collect fixes and information about how get things running
 
 The initial state of this repository is 1.1.6.4. I've fixed these issues:
 
- * The range selector (30 days, 60 days, etc.) is fixed to work as expected
- * Printing with UTF-8 is fixed
- * The printing dialog pops up in a new window
- * Sorting of mails works
- * Color adjustments for the login throbber
- * Typo fixes and unification of vocabulary
+* The range selector (30 days, 60 days, etc.) is fixed to work as expected
+* Printing with UTF-8 is fixed
+* The printing dialog pops up in a new window
+* Sorting of mails works
+* Color adjustments for the login throbber
+* Typo fixes and unification of vocabulary
 
 Build instructions
 ==================
